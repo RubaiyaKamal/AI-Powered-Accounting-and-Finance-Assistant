@@ -195,6 +195,7 @@ can be accepted or overridden in a single action.
   name, the old value, the new value, and when the change was made.
 - **FR-015a**: Users MUST be able to view an entry's edit history alongside
   the entry itself.
+
 ### Key Entities *(include if feature involves data)*
 
 - **Expense Entry**: A single recorded expense, with an amount, a date, a

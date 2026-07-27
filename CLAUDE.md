@@ -208,3 +208,11 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- Backend: Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2.0 (async) + Alembic, OpenAI Agents SDK (GPT-4o mini), `uv` (001-expense-entry)
+- Frontend: TypeScript / Node 20, Next.js (App Router), React (001-expense-entry)
+- Database: PostgreSQL — `expense_entries`, `categories`, `expense_entry_edit_history` tables (001-expense-entry)
+
+## Recent Changes
+- 001-expense-entry: Added FastAPI/Pydantic/SQLAlchemy backend, Next.js frontend, and PostgreSQL schema for expense entries, categories, and edit history
