@@ -1,6 +1,26 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.0.0 → 1.0.1 (patch: clarification / deliverable resolved)
+Modified principles: V. Documented Architecture & Workflow (text unchanged;
+  clarified that the diagram file now exists — see Follow-up TODOs)
+Added sections: none
+Removed sections: none
+Templates requiring updates:
+  - README.md ............................................ ✅ created,
+    links the workflow diagram and contains setup/run instructions
+Follow-up TODOs:
+  - TODO(WORKFLOW_DIAGRAM_URL): the diagram now exists at
+    `docs/workflow-diagram.drawio` (draw.io/diagrams.net format, covering
+    UI → API → agent → tools → database → response). It still needs a
+    *shareable URL*: open it at https://app.diagrams.net (File → Open From
+    → Device), then use Share to get a link, and record that link here and
+    in README.md. Generating that link requires the project owner's own
+    draw.io/Google/Microsoft account — it cannot be produced by the agent.
+-->
+<!--
+Sync Impact Report (previous)
+==================
 Version change: TEMPLATE → 1.0.0 (initial ratification)
 Modified principles: N/A (first adoption; all six principles newly authored)
 Added sections:
@@ -11,29 +31,6 @@ Added sections:
   - Development Workflow & Quality Gates
   - Governance
 Removed sections: none (template placeholders only)
-Templates requiring updates:
-  - .specify/templates/plan-template.md ................ ✅ compatible as-is
-    (Constitution Check gate already reads generically from this file;
-    no hardcoded principle names to update)
-  - .specify/templates/spec-template.md ................. ✅ compatible as-is
-    (no constitution-specific references to sync)
-  - .specify/templates/tasks-template.md ................ ✅ compatible as-is
-    (task categorization is generic; PR/branch discipline enforced instead by
-    the project's github-commit-workflow skill, referenced in Governance)
-  - .specify/templates/commands/*.md .................... N/A — this toolkit
-    installation keeps command definitions under .claude/commands/sp.*.md
-    instead of .specify/templates/commands/; reviewed sp.constitution.md,
-    no outdated agent-specific references found
-  - CLAUDE.md ............................................ ✅ compatible as-is
-    (already points to this file for code standards; no principle names
-    hardcoded there)
-  - README.md ............................................ ⚠ pending — file
-    does not exist yet in the repo; when created it must link the workflow
-    diagram (Principle V) and reflect the required run instructions
-Follow-up TODOs:
-  - TODO(WORKFLOW_DIAGRAM_URL): no Lucidchart/draw.io diagram has been created
-    yet. Principle V requires one; record its shareable URL in this file and
-    in README.md once produced.
 -->
 
 # AI-Powered Accounting Assistant Constitution
@@ -178,4 +175,4 @@ the relevant `plan.md`'s Complexity Tracking table, not silently introduced.
 Day-to-day operational guidance for the coding agent lives in `CLAUDE.md`,
 which defers to this file for principle-level rules.
 
-**Version**: 1.0.0 | **Ratified**: 2026-07-27 | **Last Amended**: 2026-07-27
+**Version**: 1.0.1 | **Ratified**: 2026-07-27 | **Last Amended**: 2026-07-28
