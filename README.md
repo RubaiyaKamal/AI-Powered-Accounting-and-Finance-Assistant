@@ -17,9 +17,11 @@ principles.
 
 ## Workflow diagram
 
-`docs/workflow-diagram.drawio` — open it free at
-[app.diagrams.net](https://app.diagrams.net) (File → Open From → Device) to
-view/edit, and use its Share button to get a shareable link.
+Source: `docs/workflow-diagram.drawio` (draw.io/diagrams.net format), covering
+the user flow, AI-agent flow (UI → API → agent → tools → database →
+response), and data flow.
+
+**Shareable URL**: https://drive.google.com/file/d/1D4b_y4cMLGdlJ-qPyWbK3mcLiT9Fn680/view?usp=sharing
 
 ## Running with Docker (recommended)
 

@@ -1,22 +1,24 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.0.0 → 1.0.1 (patch: clarification / deliverable resolved)
-Modified principles: V. Documented Architecture & Workflow (text unchanged;
-  clarified that the diagram file now exists — see Follow-up TODOs)
+Version change: 1.0.1 → 1.0.2 (patch: deliverable resolved)
+Modified principles: V. Documented Architecture & Workflow (text updated to
+  record the diagram's shareable URL)
 Added sections: none
 Removed sections: none
 Templates requiring updates:
-  - README.md ............................................ ✅ created,
-    links the workflow diagram and contains setup/run instructions
-Follow-up TODOs:
-  - TODO(WORKFLOW_DIAGRAM_URL): the diagram now exists at
-    `docs/workflow-diagram.drawio` (draw.io/diagrams.net format, covering
-    UI → API → agent → tools → database → response). It still needs a
-    *shareable URL*: open it at https://app.diagrams.net (File → Open From
-    → Device), then use Share to get a link, and record that link here and
-    in README.md. Generating that link requires the project owner's own
-    draw.io/Google/Microsoft account — it cannot be produced by the agent.
+  - README.md ............................................ ✅ updated with
+    the shareable diagram URL
+Follow-up TODOs: none — Principle V is now fully satisfied.
+-->
+<!--
+Sync Impact Report (previous)
+==================
+Version change: 1.0.0 → 1.0.1 (patch: clarification / deliverable resolved)
+Modified principles: V. Documented Architecture & Workflow (text unchanged;
+  clarified that the diagram file now exists)
+Added sections: none
+Removed sections: none
 -->
 <!--
 Sync Impact Report (previous)
@@ -91,6 +93,10 @@ free choice), kept reachable via a shareable URL recorded in this file and in
 `README.md`. Any change that alters how a request moves between frontend,
 backend, agent, and database MUST update the diagram in the same pull request
 that makes the change.
+
+**Diagram**: source at `docs/workflow-diagram.drawio` (draw.io/diagrams.net
+format). **Shareable URL**:
+https://drive.google.com/file/d/1D4b_y4cMLGdlJ-qPyWbK3mcLiT9Fn680/view?usp=sharing
 Rationale: the diagram is a required, separately graded deliverable, and a
 diagram that drifts from the real system is worse than no diagram — tying its
 update to the same PR is what keeps it honest.
@@ -175,4 +181,4 @@ the relevant `plan.md`'s Complexity Tracking table, not silently introduced.
 Day-to-day operational guidance for the coding agent lives in `CLAUDE.md`,
 which defers to this file for principle-level rules.
 
-**Version**: 1.0.1 | **Ratified**: 2026-07-27 | **Last Amended**: 2026-07-28
+**Version**: 1.0.2 | **Ratified**: 2026-07-27 | **Last Amended**: 2026-07-28
