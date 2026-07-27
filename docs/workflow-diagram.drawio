@@ -1,0 +1,102 @@
+<mxfile host="app.diagrams.net" modified="2026-07-28T00:00:00.000Z" agent="claude-code" version="24.0.0" type="device">
+  <diagram name="System Workflow" id="workflow-001">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- User -->
+        <mxCell id="user" value="User&#10;(Office Admin / Business Owner)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#1C1C1E;fontColor=#1C1C1E;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="420" y="30" width="260" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend -->
+        <mxCell id="frontend" value="Next.js Frontend (TypeScript)&#10;Expenses / Income / Ledgers / Reports / AI Chat UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1C1C1E;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="390" y="150" width="320" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Backend -->
+        <mxCell id="backend" value="FastAPI Backend&#10;Pydantic-validated REST API + business logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="390" y="290" width="320" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Agent layer -->
+        <mxCell id="agent" value="AI Agent Layer&#10;OpenAI Agents SDK (GPT-4o mini)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="780" y="290" width="280" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Agent tools -->
+        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, suggest_category,&#10;generate_pl, generate_balance_sheet, run_audit, answer_query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="780" y="410" width="280" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Database -->
+        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history,&#10;income, ledger records" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="390" y="440" width="320" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Principle II note -->
+        <mxCell id="note" value="Agent &amp; tools only draft / suggest / read — they never write financial data directly.&#10;Every write (create / edit / delete) goes through the same validated backend endpoint,&#10;only after the human confirms (Constitution Principle II)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#EF4444;fontColor=#1C1C1E;fontSize=11;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="560" width="360" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" value="1. HTTPS / JSON request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="user" target="frontend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" value="2. REST API call (form submit OR chat message)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="frontend" target="backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" value="3a. Direct CRUD / report query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" value="3b. Natural-language text handed to agent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="agent">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" value="4. Agent invokes a scoped tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="agent" target="tools">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" value="5. Read-only query (context for suggestion / report)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="tools" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="tools" target="backend">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="920" y="270" />
+              <mxPoint x="710" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8" value="7. Response (JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="frontend">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="330" y="325" />
+              <mxPoint x="330" y="185" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" value="8. Rendered UI (draft shown for confirmation, if AI-created)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="frontend" target="user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="330" y="185" />
+              <mxPoint x="330" y="60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e10" value="9. Confirm → normal POST/PATCH (same endpoint as manual entry)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;fontColor=#C9A227;strokeColor=#C9A227;dashed=1;" edge="1" parent="1" source="frontend" target="backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
