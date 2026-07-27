@@ -5,6 +5,14 @@
 **Status**: Draft
 **Input**: User description: "Expense entry: allow a user to create, view, edit, and delete daily expense records (amount, date, category, description), including natural-language entry creation (e.g. \"add a 5000 electricity bill for July\") and AI-assisted auto-categorization of uncategorized entries."
 
+## Clarifications
+
+### Session 2026-07-27
+
+- Q: Should categories come from a fixed, predefined list that the admin cannot extend, or should the admin be able to create new custom categories on the fly? → A: Predefined starter list (e.g. Utilities, Rent, Salaries, Supplies) that the admin can extend with custom categories.
+- Q: Is field-level edit history required for expense entries now, or is storing only current state sufficient, deferring change-auditing to the later audit feature? → A: Track full field-level edit history (what changed, old→new value, when) from the start.
+- Q: When natural-language parsing can't determine a required field, should the assistant ask a clarifying follow-up question in the same chat turn, or fall back to opening the manual entry form pre-filled with whatever it could parse? → A: Ask a clarifying follow-up question in the same chat turn.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Record an expense manually (Priority: P1)
@@ -53,10 +61,14 @@ confirming it no longer appears in the list.
    a date range and/or a category, **Then** only matching entries are shown.
 2. **Given** an existing expense entry, **When** the admin edits its amount,
    date, category, or description and saves, **Then** the entry reflects the
-   updated values everywhere it is shown.
+   updated values everywhere it is shown, and the prior value is retained in
+   that entry's edit history.
 3. **Given** an existing expense entry, **When** the admin deletes it,
    **Then** it no longer appears in the expense list or in any subsequent
    report calculations.
+4. **Given** an existing expense entry with prior edits, **When** the admin
+   views the entry, **Then** its edit history (field, old value, new value,
+   when) is available to view.
 
 ---
 
@@ -161,7 +173,9 @@ can be accepted or overridden in a single action.
   confirmation (or correction) before the entry is saved.
 - **FR-009**: When a natural-language request is missing information needed
   to create a valid entry, the system MUST ask a specific follow-up question
-  rather than guessing a value or silently discarding the request.
+  in the same chat turn (e.g., "What was the amount?") rather than guessing
+  a value, silently discarding the request, or falling back to a separate
+  form.
 - **FR-010**: When an entry is submitted without an explicit category, the
   system MUST suggest one based on the entry's description, visibly marked
   as AI-suggested.
@@ -173,24 +187,14 @@ can be accepted or overridden in a single action.
   sessions and are not lost on restart.
 - **FR-013**: The system MUST record when each expense entry was created and
   when it was last modified.
-- **FR-014**: System MUST use a category taxonomy for expense entries as
-  described in [NEEDS CLARIFICATION: should categories come from a fixed,
-  predefined list (e.g. Utilities, Rent, Salaries, Supplies) that the admin
-  cannot extend, or should the admin be able to create new custom categories
-  on the fly? This changes both the data model and how AI category
-  suggestion is scored].
-- **FR-015**: System MUST/MUST NOT track a history of changes made to an
-  expense entry after its creation, per [NEEDS CLARIFICATION: is a
-  field-level edit history required for this feature now (e.g. "amount
-  changed from 4000 to 5000 on 2026-08-02"), or is storing only the current
-  state of each entry sufficient, with detailed change auditing deferred to
-  the later audit feature?].
-- **FR-016**: When natural-language parsing cannot determine a required
-  field, the system MUST resolve it via [NEEDS CLARIFICATION: should the
-  assistant ask a clarifying follow-up question in the same chat turn, or
-  fall back to opening the manual entry form pre-filled with whatever it
-  could parse, leaving the admin to complete the rest?].
-
+- **FR-014**: The system MUST provide a predefined starter set of categories
+  (e.g. Utilities, Rent, Salaries, Supplies) and MUST allow the admin to add
+  new custom categories beyond that starter set.
+- **FR-015**: The system MUST record a field-level edit history for every
+  expense entry: each time a field is changed, it MUST retain the field
+  name, the old value, the new value, and when the change was made.
+- **FR-015a**: Users MUST be able to view an entry's edit history alongside
+  the entry itself.
 ### Key Entities *(include if feature involves data)*
 
 - **Expense Entry**: A single recorded expense, with an amount, a date, a
@@ -199,8 +203,12 @@ can be accepted or overridden in a single action.
   form or via natural language, and whether its category is AI-suggested or
   user-chosen.
 - **Category**: A label used to group expense entries for reporting and
-  filtering (e.g., Utilities, Rent, Supplies, Salaries). Whether the set of
-  categories is fixed or user-extensible is covered by FR-014.
+  filtering. Ships with a predefined starter set (e.g., Utilities, Rent,
+  Supplies, Salaries) and is extensible — the admin can add custom
+  categories beyond the starter set (FR-014).
+- **Edit History Entry**: A record of a single field change on an expense
+  entry — the field name, its old value, its new value, and when the change
+  occurred (FR-015). Belongs to exactly one Expense Entry.
 
 ### Assumptions
 
