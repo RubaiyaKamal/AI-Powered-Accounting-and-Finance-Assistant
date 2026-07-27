@@ -183,8 +183,8 @@ can be accepted or overridden in a single action.
   category in a single action; overriding MUST remove the "AI-suggested"
   marker from that entry.
 - **FR-012**: The system MUST persist every expense entry (and its edit
-  history — see Assumptions) so that entries remain available across
-  sessions and are not lost on restart.
+  history — see FR-015) so that entries remain available across sessions
+  and are not lost on restart.
 - **FR-013**: The system MUST record when each expense entry was created and
   when it was last modified.
 - **FR-014**: The system MUST provide a predefined starter set of categories

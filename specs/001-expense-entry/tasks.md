@@ -53,9 +53,10 @@ description: "Task list for expense-entry feature implementation"
 
 **Independent Test**: Submit an entry with amount/date/category via the form and confirm it appears in the list with exactly those values; submit a zero/negative amount or a missing field and confirm rejection.
 
-- [ ] T017 [US1] Implement `CategoryService.list_categories` in `backend/src/services/category_service.py`
-- [ ] T018 [US1] Implement `ExpenseEntryService.create_entry` (validates amount > 0, required fields present, resolves `category_id`) in `backend/src/services/expense_entry_service.py`, per FR-001–FR-003
-- [ ] T019 [US1] Implement `POST /api/expenses` in `backend/src/api/expenses.py` and `GET /api/categories` in `backend/src/api/categories.py`, per `contracts/expense-entries-api.md`
+- [ ] T017 [US1] Implement `CategoryService.list_categories` and `CategoryService.create_category` (rejects case-insensitive duplicate names, FR-014) in `backend/src/services/category_service.py`
+- [ ] T018 [US1] Implement `ExpenseEntryService.create_entry` (validates amount > 0, required fields present, requires a resolved `category_id`) in `backend/src/services/expense_entry_service.py`, per FR-001–FR-003. AI-suggestion of an omitted category is added later in US4 (T038) — until then, `category_id` is required input.
+- [ ] T019 [US1] Implement `POST /api/expenses`, `GET /api/categories`, and `POST /api/categories` (add custom category, FR-014) in `backend/src/api/expenses.py` and `backend/src/api/categories.py`, per `contracts/expense-entries-api.md`
+- [ ] T019a [US1] Add an "add category" control (name input + submit) wired to `POST /api/categories` in `frontend/src/components/ExpenseForm.tsx`, per FR-014
 - [ ] T020 [US1] Register the expenses and categories routers in `backend/src/main.py`
 - [ ] T021 [US1] Build the `ExpenseForm` component (amount/date/category/description fields) in `frontend/src/components/ExpenseForm.tsx`
 - [ ] T022 [US1] Build the expenses page wiring `ExpenseForm` to `POST /api/expenses` in `frontend/src/app/expenses/page.tsx`
