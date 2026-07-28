@@ -8,11 +8,18 @@ semantics.
 
 ## Decision: Deterministic fuzzy-string matching, not embeddings
 
-**Decision**: Description similarity is computed with `rapidfuzz` (a
-lightweight, dependency-light fuzzy-string-matching library), combined
-with exact amount comparison and a date-proximity window (candidates
-within a configurable number of days), producing a deterministic composite
-score per candidate. No embeddings API call is made for scoring.
+**Decision**: Description similarity is computed with `rapidfuzz`'s
+`token_set_ratio` (case/punctuation-normalized via its `default_process`),
+combined with exact amount comparison and a date-proximity window
+(candidates within a configurable number of days), producing a
+deterministic composite score per candidate. No embeddings API call is
+made for scoring. `token_set_ratio` specifically — not `token_sort_ratio`
+— was chosen after live testing showed real bank-statement descriptions
+are typically terser/abbreviated versions of the fuller expense
+description (e.g. "WIFI CHARGES JULY" vs "Wi-fi charges for the month
+July"): `token_sort_ratio` penalizes the expense description's extra words
+as a mismatch, while `token_set_ratio` correctly scores a token-subset
+relationship highly.
 **Rationale**: The spec's own language ("embedding/fuzzy matching") allows
 either interpretation; a pure string-similarity approach is simpler, adds
 no new external API dependency or per-transaction cost, and is fully

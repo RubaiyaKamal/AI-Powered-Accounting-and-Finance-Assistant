@@ -23,8 +23,11 @@ export default function RootLayout({
             <Link href="/expenses" style={{ color: "inherit", marginRight: "1rem" }}>
               Expenses
             </Link>
-            <Link href="/ledger" style={{ color: "inherit" }}>
+            <Link href="/ledger" style={{ color: "inherit", marginRight: "1rem" }}>
               Ledger
+            </Link>
+            <Link href="/reconciliation" style={{ color: "inherit" }}>
+              Reconciliation
             </Link>
           </nav>
         </header>
