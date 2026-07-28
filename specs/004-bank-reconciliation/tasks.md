@@ -19,8 +19,8 @@ description: "Task list for bank reconciliation feature implementation"
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 [P] Add `rapidfuzz` as a dependency in `backend/pyproject.toml`, per `research.md`'s fuzzy-matching decision
-- [ ] T002 Create this feature's new file skeleton: `backend/src/models/{bank_transaction,match}.py`, `backend/src/schemas/{bank_transaction,match}.py`, `backend/src/services/reconciliation_service.py`, `backend/src/agent/reconciliation_tools.py`, `backend/src/api/reconciliation.py`; `frontend/src/app/reconciliation/`, `frontend/src/components/{BankStatementImport.tsx,ReconciliationQueue.tsx}`, `frontend/src/services/reconciliationApi.ts` — per `plan.md`'s Project Structure
+- [x] T001 [P] Add `rapidfuzz` as a dependency in `backend/pyproject.toml`, per `research.md`'s fuzzy-matching decision
+- [x] T002 Create this feature's new file skeleton: `backend/src/models/{bank_transaction,match}.py`, `backend/src/schemas/{bank_transaction,match}.py`, `backend/src/services/reconciliation_service.py`, `backend/src/agent/reconciliation_tools.py`, `backend/src/api/reconciliation.py`; `frontend/src/app/reconciliation/`, `frontend/src/components/{BankStatementImport.tsx,ReconciliationQueue.tsx}`, `frontend/src/services/reconciliationApi.ts` — per `plan.md`'s Project Structure
 
 ---
 
@@ -28,11 +28,11 @@ description: "Task list for bank reconciliation feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T003 [P] Create the `BankTransaction` SQLAlchemy model (`id`, `date`, `amount`, `description`, `suggested_expense_entry_id` FK `ON DELETE SET NULL`, `ai_reasoning`, `created_at`; unique constraint on `(date, amount, description)`) in `backend/src/models/bank_transaction.py`, per `data-model.md`
-- [ ] T004 [P] Create the `Match` SQLAlchemy model (`id`, `bank_transaction_id` FK unique, `expense_entry_id` FK `ON DELETE CASCADE` nullable with a partial unique index where not null, `source`, `status`, `ai_reasoning`, `created_at`) in `backend/src/models/match.py`, per `data-model.md`
-- [ ] T005 Write the Alembic migration creating both tables from T003–T004, including the `(date, amount, description)` unique constraint and the partial unique index on `matches.expense_entry_id`, in `backend/migrations/versions/`
-- [ ] T006 [P] Create `BankTransaction` Pydantic response schemas in `backend/src/schemas/bank_transaction.py`, per `contracts/reconciliation-api.md`
-- [ ] T007 [P] Create `Match` Pydantic response schemas in `backend/src/schemas/match.py`, per `contracts/reconciliation-api.md`
+- [x] T003 [P] Create the `BankTransaction` SQLAlchemy model (`id`, `date`, `amount`, `description`, `suggested_expense_entry_id` FK `ON DELETE SET NULL`, `ai_reasoning`, `created_at`; unique constraint on `(date, amount, description)`) in `backend/src/models/bank_transaction.py`, per `data-model.md`
+- [x] T004 [P] Create the `Match` SQLAlchemy model (`id`, `bank_transaction_id` FK unique, `expense_entry_id` FK `ON DELETE CASCADE` nullable with a partial unique index where not null, `source`, `status`, `ai_reasoning`, `created_at`) in `backend/src/models/match.py`, per `data-model.md`
+- [x] T005 Write the Alembic migration creating both tables from T003–T004, including the `(date, amount, description)` unique constraint and the partial unique index on `matches.expense_entry_id`, in `backend/migrations/versions/`
+- [x] T006 [P] Create `BankTransaction` Pydantic response schemas in `backend/src/schemas/bank_transaction.py`, per `contracts/reconciliation-api.md`
+- [x] T007 [P] Create `Match` Pydantic response schemas in `backend/src/schemas/match.py`, per `contracts/reconciliation-api.md`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -44,12 +44,12 @@ description: "Task list for bank reconciliation feature implementation"
 
 **Independent Test**: Import a set of bank transaction lines and confirm they appear in the system, unmatched, ready for reconciliation; re-import the same file and confirm no duplicates are created.
 
-- [ ] T008 [US1] Implement `ReconciliationService.parse_csv` (case-insensitive `date`/`amount`/`description` column matching; returns valid rows plus a list of skipped invalid rows with reasons) in `backend/src/services/reconciliation_service.py`, per FR-001, Edge Cases
-- [ ] T009 [US1] Implement `ReconciliationService.import_transactions` (inserts parsed rows as `BankTransaction`s, skipping exact `(date, amount, description)` duplicates via T003's unique constraint) in `backend/src/services/reconciliation_service.py`, per FR-003 (depends on T008)
-- [ ] T010 [US1] Implement `POST /api/reconciliation/import` (multipart CSV upload; calls `parse_csv` + `import_transactions`; returns the import summary shape from `contracts/reconciliation-api.md`) in `backend/src/api/reconciliation.py`
-- [ ] T011 [US1] Register the reconciliation router in `backend/src/main.py`
-- [ ] T012 [US1] Build the `BankStatementImport` component (file upload control, shows the import summary response) in `frontend/src/components/BankStatementImport.tsx`
-- [ ] T013 [US1] Add `importBankStatement(file)` to `frontend/src/services/reconciliationApi.ts`, build the reconciliation page wiring `BankStatementImport` in `frontend/src/app/reconciliation/page.tsx`, and add a nav link in `frontend/src/app/layout.tsx`
+- [x] T008 [US1] Implement `ReconciliationService.parse_csv` (case-insensitive `date`/`amount`/`description` column matching; returns valid rows plus a list of skipped invalid rows with reasons) in `backend/src/services/reconciliation_service.py`, per FR-001, Edge Cases
+- [x] T009 [US1] Implement `ReconciliationService.import_transactions` (inserts parsed rows as `BankTransaction`s, skipping exact `(date, amount, description)` duplicates via T003's unique constraint) in `backend/src/services/reconciliation_service.py`, per FR-003 (depends on T008)
+- [x] T010 [US1] Implement `POST /api/reconciliation/import` (multipart CSV upload; calls `parse_csv` + `import_transactions`; returns the import summary shape from `contracts/reconciliation-api.md`) in `backend/src/api/reconciliation.py`
+- [x] T011 [US1] Register the reconciliation router in `backend/src/main.py`
+- [x] T012 [US1] Build the `BankStatementImport` component (file upload control, shows the import summary response) in `frontend/src/components/BankStatementImport.tsx`
+- [x] T013 [US1] Add `importBankStatement(file)` to `frontend/src/services/reconciliationApi.ts`, build the reconciliation page wiring `BankStatementImport` in `frontend/src/app/reconciliation/page.tsx`, and add a nav link in `frontend/src/app/layout.tsx`
 
 **Checkpoint**: User Story 1 is fully functional and independently testable — this is the MVP (import + dedupe, no matching yet).
 
@@ -63,12 +63,12 @@ description: "Task list for bank reconciliation feature implementation"
 
 > **Note**: `adjudicate_match` (T016) is developed in this phase, not User Story 3, because matching's three-way classification (auto/ambiguous/none) can't complete without it — the ambiguous branch needs the AI's choice and reasoning at import time, not lazily when the queue is later viewed (`research.md`). This mirrors how `002-ledger-journal-entries`'s core posting logic ended up living in its own User Story 1 for the same structural reason. User Story 3's own scope is the queue-viewing/resolution endpoints and UI that consume what this phase produces.
 
-- [ ] T014 [US2] Implement `ReconciliationService.score_candidates` (for a `BankTransaction`, finds `ExpenseEntry` rows with an exact amount match and a date within the configured window, and computes a `rapidfuzz` description-similarity score for each) in `backend/src/services/reconciliation_service.py`, per `research.md`'s Matching Thresholds decision
-- [ ] T015 [US2] Implement `ReconciliationService.classify_match` (applies the auto/ambiguous/none thresholds from `research.md` to `score_candidates`'s output) in `backend/src/services/reconciliation_service.py` (depends on T014)
-- [ ] T016 [US2] Implement the `adjudicate_match` agent tool (bank transaction + a bounded list of ambiguous candidates → a chosen `expense_entry_id` or `null`, plus reasoning; never sees the full expense-entry table) in `backend/src/agent/reconciliation_tools.py`, per `research.md`'s AI Adjudication Tool decision
-- [ ] T017 [US2] Implement `ReconciliationService.run_matching_for_transaction` (auto → creates a `Match` row with `source=auto`, `status=confirmed`; ambiguous → calls `adjudicate_match`, stores `suggested_expense_entry_id`/`ai_reasoning` on the `BankTransaction`; none → leaves it unmatched with no suggestion) in `backend/src/services/reconciliation_service.py`, per FR-004–FR-007 (depends on T015, T016)
-- [ ] T018 [US2] Wire `run_matching_for_transaction` into `POST /api/reconciliation/import` so every newly imported (non-duplicate) transaction is matched immediately in `backend/src/api/reconciliation.py` (depends on T010, T017)
-- [ ] T019 [US2] Implement `GET /api/reconciliation/bank-transactions` (list with optional `status` filter) in `backend/src/api/reconciliation.py`, per `contracts/reconciliation-api.md`
+- [x] T014 [US2] Implement `ReconciliationService.score_candidates` (for a `BankTransaction`, finds `ExpenseEntry` rows with an exact amount match and a date within the configured window, and computes a `rapidfuzz` description-similarity score for each) in `backend/src/services/reconciliation_service.py`, per `research.md`'s Matching Thresholds decision
+- [x] T015 [US2] Implement `ReconciliationService.classify_match` (applies the auto/ambiguous/none thresholds from `research.md` to `score_candidates`'s output) in `backend/src/services/reconciliation_service.py` (depends on T014)
+- [x] T016 [US2] Implement the `adjudicate_match` agent tool (bank transaction + a bounded list of ambiguous candidates → a chosen `expense_entry_id` or `null`, plus reasoning; never sees the full expense-entry table) in `backend/src/agent/reconciliation_tools.py`, per `research.md`'s AI Adjudication Tool decision
+- [x] T017 [US2] Implement `ReconciliationService.run_matching_for_transaction` (auto → creates a `Match` row with `source=auto`, `status=confirmed`; ambiguous → calls `adjudicate_match`, stores `suggested_expense_entry_id`/`ai_reasoning` on the `BankTransaction`; none → leaves it unmatched with no suggestion) in `backend/src/services/reconciliation_service.py`, per FR-004–FR-007 (depends on T015, T016)
+- [x] T018 [US2] Wire `run_matching_for_transaction` into `POST /api/reconciliation/import` so every newly imported (non-duplicate) transaction is matched immediately in `backend/src/api/reconciliation.py` (depends on T010, T017)
+- [x] T019 [US2] Implement `GET /api/reconciliation/bank-transactions` (list with optional `status` filter) in `backend/src/api/reconciliation.py`, per `contracts/reconciliation-api.md`
 
 **Checkpoint**: User Stories 1 AND 2 both work independently.
 
@@ -80,12 +80,12 @@ description: "Task list for bank reconciliation feature implementation"
 
 **Independent Test**: Trigger a reconciliation pass that produces one ambiguous and one fully-unmatched transaction, confirm both appear in the review queue (the ambiguous one showing AI reasoning), and confirm resolving each removes it from the queue.
 
-- [ ] T020 [US3] Implement `ReconciliationService.list_review_queue` (unmatched `BankTransaction`s — no `Match` row — with `candidates_considered` recomputed live via T014 for display, alongside any already-persisted `suggested_expense_entry_id`/`ai_reasoning`) in `backend/src/services/reconciliation_service.py`, per FR-006, FR-007
-- [ ] T021 [US3] Implement `GET /api/reconciliation/review-queue` in `backend/src/api/reconciliation.py`, per `contracts/reconciliation-api.md`
-- [ ] T022 [US3] Implement `ReconciliationService.confirm_match`, `ReconciliationService.dismiss_transaction`, and `ReconciliationService.undo_match` (enforcing FR-010's one-to-one constraint via T004's unique indexes, and FR-009's no-resurface guarantee via `Match` row existence) in `backend/src/services/reconciliation_service.py`, per FR-008, FR-009, FR-011
-- [ ] T023 [US3] Implement `POST /api/reconciliation/bank-transactions/{id}/match`, `POST /api/reconciliation/bank-transactions/{id}/dismiss`, and `DELETE /api/reconciliation/matches/{id}` in `backend/src/api/reconciliation.py`, per `contracts/reconciliation-api.md`
-- [ ] T024 [US3] Build the `ReconciliationQueue` component (matched-transactions list plus the review queue with AI reasoning display, confirm/correct/dismiss controls, and an undo control on confirmed matches) in `frontend/src/components/ReconciliationQueue.tsx`
-- [ ] T025 [US3] Wire `ReconciliationQueue` into the reconciliation page in `frontend/src/app/reconciliation/page.tsx`
+- [x] T020 [US3] Implement `ReconciliationService.list_review_queue` (unmatched `BankTransaction`s — no `Match` row — with `candidates_considered` recomputed live via T014 for display, alongside any already-persisted `suggested_expense_entry_id`/`ai_reasoning`) in `backend/src/services/reconciliation_service.py`, per FR-006, FR-007
+- [x] T021 [US3] Implement `GET /api/reconciliation/review-queue` in `backend/src/api/reconciliation.py`, per `contracts/reconciliation-api.md`
+- [x] T022 [US3] Implement `ReconciliationService.confirm_match`, `ReconciliationService.dismiss_transaction`, and `ReconciliationService.undo_match` (enforcing FR-010's one-to-one constraint via T004's unique indexes, and FR-009's no-resurface guarantee via `Match` row existence) in `backend/src/services/reconciliation_service.py`, per FR-008, FR-009, FR-011
+- [x] T023 [US3] Implement `POST /api/reconciliation/bank-transactions/{id}/match`, `POST /api/reconciliation/bank-transactions/{id}/dismiss`, and `DELETE /api/reconciliation/matches/{id}` in `backend/src/api/reconciliation.py`, per `contracts/reconciliation-api.md`
+- [x] T024 [US3] Build the `ReconciliationQueue` component (matched-transactions list plus the review queue with AI reasoning display, confirm/correct/dismiss controls, and an undo control on confirmed matches) in `frontend/src/components/ReconciliationQueue.tsx`
+- [x] T025 [US3] Wire `ReconciliationQueue` into the reconciliation page in `frontend/src/app/reconciliation/page.tsx`
 
 **Checkpoint**: All three user stories are independently functional.
 
@@ -93,9 +93,9 @@ description: "Task list for bank reconciliation feature implementation"
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T026 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `adjudicate_match` tool and the CSV-import/matching flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
-- [ ] T027 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
-- [ ] T028 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
+- [x] T026 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `adjudicate_match` tool and the CSV-import/matching flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
+- [x] T027 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
+- [x] T028 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
 
 ---
 
