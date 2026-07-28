@@ -8,6 +8,9 @@ from src.models.expense_entry import ExpenseEntry
 from src.models.expense_entry_edit_history import ExpenseEntryEditHistory
 from src.models.journal_entry import JournalEntry
 from src.models.match import Match
+from src.models.tax_rules_document import TaxRulesDocument
+from src.models.tax_rules_document_chunk import TaxRulesDocumentChunk
+from src.models.tax_summary import TaxSummary
 
 __all__ = [
     "Account",
@@ -20,4 +23,7 @@ __all__ = [
     "ExpenseEntryEditHistory",
     "JournalEntry",
     "Match",
+    "TaxRulesDocument",
+    "TaxRulesDocumentChunk",
+    "TaxSummary",
 ]
