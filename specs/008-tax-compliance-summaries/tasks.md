@@ -44,12 +44,12 @@ description: "Task list for tax and compliance summaries feature implementation"
 
 **Independent Test**: Add a reference document, confirm it appears in the library with its content viewable, and confirm removing it makes it disappear from the library.
 
-- [ ] T008 [US1] Implement `TaxDocumentService.add_document(session, title, content)` — splits `content` into paragraph-sized chunks (`research.md`'s chunking decision), calls `embed_text` for each chunk, persists the `TaxRulesDocument` and its `TaxRulesDocumentChunk` rows — in `backend/src/services/tax_document_service.py`, per FR-001 (depends on T002, T003, T007)
-- [ ] T009 [US1] Implement `TaxDocumentService.list_documents`, `get_document`, and `delete_document` in `backend/src/services/tax_document_service.py`, per FR-001
-- [ ] T010 [US1] Implement `POST /api/tax/documents`, `GET /api/tax/documents`, `GET /api/tax/documents/{id}`, `DELETE /api/tax/documents/{id}` in `backend/src/api/tax.py`, per `contracts/tax-api.md` (depends on T008, T009)
-- [ ] T011 [US1] Register the tax router in `backend/src/main.py`
-- [ ] T012 [US1] Build the `TaxDocumentLibrary` component (add-document form with title/content fields, list of existing documents with view and remove controls) in `frontend/src/components/TaxDocumentLibrary.tsx`
-- [ ] T013 [US1] Add `addDocument`/`listDocuments`/`getDocument`/`deleteDocument` to `frontend/src/services/taxApi.ts`, build the tax page wiring `TaxDocumentLibrary` in `frontend/src/app/tax/page.tsx`, and add a "Tax" link to `frontend/src/components/Sidebar.tsx`
+- [X] T008 [US1] Implement `TaxDocumentService.add_document(session, title, content)` — splits `content` into paragraph-sized chunks (`research.md`'s chunking decision), calls `embed_text` for each chunk, persists the `TaxRulesDocument` and its `TaxRulesDocumentChunk` rows — in `backend/src/services/tax_document_service.py`, per FR-001 (depends on T002, T003, T007)
+- [X] T009 [US1] Implement `TaxDocumentService.list_documents`, `get_document`, and `delete_document` in `backend/src/services/tax_document_service.py`, per FR-001
+- [X] T010 [US1] Implement `POST /api/tax/documents`, `GET /api/tax/documents`, `GET /api/tax/documents/{id}`, `DELETE /api/tax/documents/{id}` in `backend/src/api/tax.py`, per `contracts/tax-api.md` (depends on T008, T009)
+- [X] T011 [US1] Register the tax router in `backend/src/main.py`
+- [X] T012 [US1] Build the `TaxDocumentLibrary` component (add-document form with title/content fields, list of existing documents with view and remove controls) in `frontend/src/components/TaxDocumentLibrary.tsx`
+- [X] T013 [US1] Add `addDocument`/`listDocuments`/`getDocument`/`deleteDocument` to `frontend/src/services/taxApi.ts`, build the tax page wiring `TaxDocumentLibrary` in `frontend/src/app/tax/page.tsx`, and add a "Tax" link to `frontend/src/components/Sidebar.tsx`
 
 **Checkpoint**: User Story 1 is fully functional and independently testable.
 

@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/reconciliation", label: "Reconciliation" },
   { href: "/reports", label: "Reports" },
   { href: "/audit", label: "Audit" },
+  { href: "/tax", label: "Tax" },
 ];
 
 export default function Sidebar() {
