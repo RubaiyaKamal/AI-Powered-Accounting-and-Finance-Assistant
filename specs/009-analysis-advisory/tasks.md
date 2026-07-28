@@ -19,7 +19,7 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Create this feature's new file skeleton: `backend/src/schemas/analysis.py`, `backend/src/services/analysis_service.py`, `backend/src/agent/analysis_tools.py`, `backend/src/api/analysis.py`; `frontend/src/app/analysis/`, `frontend/src/components/{SpendingQuery.tsx,SpendingBreakdown.tsx,SpendingForecast.tsx}`, `frontend/src/services/analysisApi.ts` — per `plan.md`'s Project Structure (no new dependency — `research.md`'s decisions reuse `scikit-learn`, already present)
+- [X] T001 Create this feature's new file skeleton: `backend/src/schemas/analysis.py`, `backend/src/services/analysis_service.py`, `backend/src/agent/analysis_tools.py`, `backend/src/api/analysis.py`; `frontend/src/app/analysis/`, `frontend/src/components/{SpendingQuery.tsx,SpendingBreakdown.tsx,SpendingForecast.tsx}`, `frontend/src/services/analysisApi.ts` — per `plan.md`'s Project Structure (no new dependency — `research.md`'s decisions reuse `scikit-learn`, already present)
 
 ---
 
@@ -27,7 +27,7 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 [P] Create the Pydantic schemas (`SpendingAmountResponse`; `BreakdownLine` + `SpendingBreakdownResponse`; `ComparisonLine` + `SpendingComparisonResponse`; `HistoricalPoint` + `SpendingForecastResponse` with `status`; `SpendingQueryRequest`, `SpendingQueryResponse`) in `backend/src/schemas/analysis.py`, per `data-model.md` and `contracts/analysis-api.md`
+- [X] T002 [P] Create the Pydantic schemas (`SpendingAmountResponse`; `BreakdownLine` + `SpendingBreakdownResponse`; `ComparisonLine` + `SpendingComparisonResponse`; `HistoricalPoint` + `SpendingForecastResponse` with `status`; `SpendingQueryRequest`, `SpendingQueryResponse`) in `backend/src/schemas/analysis.py`, per `data-model.md` and `contracts/analysis-api.md`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -39,12 +39,12 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 **Independent Test**: Post expense activity to a known account in a known period, ask a natural-language question about that account and period, and confirm the answer states the correct figure.
 
-- [ ] T003 [US1] Implement `AnalysisService.spending_amount(session, account_name, start, end)` — matches `account_name` case-insensitively against the chart of accounts, raising `NotFoundError` if no match (FR-005); otherwise calls `reporting_service.profit_and_loss(session, start, end)` and returns the matching `expense_lines` entry, or a zero-amount result if the account exists but had no activity that period — in `backend/src/services/analysis_service.py`, per FR-001, FR-005, `data-model.md`
-- [ ] T004 [US1] Implement `resolve_spending_request(question, today, account_names)` in `backend/src/agent/analysis_tools.py` — classifies a question into one of the four request kinds (`amount`, `breakdown`, `comparison`, `forecast`) or `null`, plus parameters (`account_name` bound to the given real account list for `amount`; `start`/`end` for `amount`/`breakdown`/forecast target; `period_a`/`period_b` for `comparison`); mirrors `suggest_account_coding`'s bounded-choice account matching and `007`/`008`'s "unresolvable, don't guess" shape — per `research.md`
-- [ ] T005 [US1] Implement `narrate_spending_result(request_kind, computed_result)` in `backend/src/agent/analysis_tools.py` — narrates an already-computed result into prose per `request_kind`, explicitly framing a forecast as an estimate (FR-008); deterministic per-kind fallback template when no `OPENAI_API_KEY` is configured — per `research.md`
-- [ ] T006 [US1] Implement `POST /api/agent/analysis/query` in `backend/src/api/agent.py` — fetches the real expense account names, resolves the question via `resolve_spending_request`, handles the `amount` branch by calling `AnalysisService.spending_amount`, narrates via `narrate_spending_result`; returns `422` with a clarifying question when `request_kind` is `null`, no account could be matched, or the resolved kind isn't wired up yet (`breakdown`/`comparison`/`forecast`, added in later phases) — per `contracts/analysis-api.md` (depends on T003, T004, T005)
-- [ ] T007 [US1] Build the `SpendingQuery` component (free-text question box, narrated answer, underlying data rendered) in `frontend/src/components/SpendingQuery.tsx`
-- [ ] T008 [US1] Add `queryAnalysis(question)` to `frontend/src/services/analysisApi.ts`, build the analysis page wiring `SpendingQuery` in `frontend/src/app/analysis/page.tsx`, and add an "Analysis" link to `frontend/src/components/Sidebar.tsx`
+- [X] T003 [US1] Implement `AnalysisService.spending_amount(session, account_name, start, end)` — matches `account_name` case-insensitively against the chart of accounts, raising `NotFoundError` if no match (FR-005); otherwise calls `reporting_service.profit_and_loss(session, start, end)` and returns the matching `expense_lines` entry, or a zero-amount result if the account exists but had no activity that period — in `backend/src/services/analysis_service.py`, per FR-001, FR-005, `data-model.md`
+- [X] T004 [US1] Implement `resolve_spending_request(question, today, account_names)` in `backend/src/agent/analysis_tools.py` — classifies a question into one of the four request kinds (`amount`, `breakdown`, `comparison`, `forecast`) or `null`, plus parameters (`account_name` bound to the given real account list for `amount`; `start`/`end` for `amount`/`breakdown`/forecast target; `period_a`/`period_b` for `comparison`); mirrors `suggest_account_coding`'s bounded-choice account matching and `007`/`008`'s "unresolvable, don't guess" shape — per `research.md`
+- [X] T005 [US1] Implement `narrate_spending_result(request_kind, computed_result)` in `backend/src/agent/analysis_tools.py` — narrates an already-computed result into prose per `request_kind`, explicitly framing a forecast as an estimate (FR-008); deterministic per-kind fallback template when no `OPENAI_API_KEY` is configured — per `research.md`
+- [X] T006 [US1] Implement `POST /api/agent/analysis/query` in `backend/src/api/agent.py` — fetches the real expense account names, resolves the question via `resolve_spending_request`, handles the `amount` branch by calling `AnalysisService.spending_amount`, narrates via `narrate_spending_result`; returns `422` with a clarifying question when `request_kind` is `null`, no account could be matched, or the resolved kind isn't wired up yet (`breakdown`/`comparison`/`forecast`, added in later phases) — per `contracts/analysis-api.md` (depends on T003, T004, T005)
+- [X] T007 [US1] Build the `SpendingQuery` component (free-text question box, narrated answer, underlying data rendered) in `frontend/src/components/SpendingQuery.tsx`
+- [X] T008 [US1] Add `queryAnalysis(question)` to `frontend/src/services/analysisApi.ts`, build the analysis page wiring `SpendingQuery` in `frontend/src/app/analysis/page.tsx`, and add an "Analysis" link to `frontend/src/components/Sidebar.tsx`
 
 **Checkpoint**: User Story 1 is fully functional and independently testable — this is the MVP.
 
@@ -56,13 +56,13 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 **Independent Test**: Post expense activity across several accounts in a period, request a breakdown for that period, and confirm every account with activity appears with its correct total, ranked highest to lowest; separately, request a comparison between two periods and confirm the reported change matches the actual difference in posted activity.
 
-- [ ] T009 [US2] Implement `AnalysisService.breakdown(session, start, end)` — defaults both to the current calendar month when omitted; calls `reporting_service.profit_and_loss`, sorts `expense_lines` by balance descending, computes each line's share of the total — in `backend/src/services/analysis_service.py`, per FR-003(b), FR-006, `data-model.md`
-- [ ] T010 [US2] Implement `AnalysisService.comparison(session, period_a_start, period_a_end, period_b_start, period_b_end)` — calls `profit_and_loss` twice and merges the results by account (an account absent from one period contributes `0.00` for it), computing the change per account and overall — in `backend/src/services/analysis_service.py`, per FR-003(c), FR-006, `data-model.md`
-- [ ] T011 [US2] Implement `GET /api/analysis/breakdown` and `GET /api/analysis/comparison` in `backend/src/api/analysis.py`, per `contracts/analysis-api.md` (depends on T009, T010)
-- [ ] T012 [US2] Register the analysis router in `backend/src/main.py`
-- [ ] T013 [US2] Wire the `breakdown` and `comparison` branches into `POST /api/agent/analysis/query` in `backend/src/api/agent.py`, calling the same `AnalysisService` functions T011's endpoints use (depends on T009, T010, T006)
-- [ ] T014 [US2] Build the `SpendingBreakdown` component (period picker + ranked breakdown table; a two-period picker + comparison table) in `frontend/src/components/SpendingBreakdown.tsx`
-- [ ] T015 [US2] Add `getBreakdown`/`getComparison` to `frontend/src/services/analysisApi.ts` and wire `SpendingBreakdown` into `frontend/src/app/analysis/page.tsx`
+- [X] T009 [US2] Implement `AnalysisService.breakdown(session, start, end)` — defaults both to the current calendar month when omitted; calls `reporting_service.profit_and_loss`, sorts `expense_lines` by balance descending, computes each line's share of the total — in `backend/src/services/analysis_service.py`, per FR-003(b), FR-006, `data-model.md`
+- [X] T010 [US2] Implement `AnalysisService.comparison(session, period_a_start, period_a_end, period_b_start, period_b_end)` — calls `profit_and_loss` twice and merges the results by account (an account absent from one period contributes `0.00` for it), computing the change per account and overall — in `backend/src/services/analysis_service.py`, per FR-003(c), FR-006, `data-model.md`
+- [X] T011 [US2] Implement `GET /api/analysis/breakdown` and `GET /api/analysis/comparison` in `backend/src/api/analysis.py`, per `contracts/analysis-api.md` (depends on T009, T010)
+- [X] T012 [US2] Register the analysis router in `backend/src/main.py`
+- [X] T013 [US2] Wire the `breakdown` and `comparison` branches into `POST /api/agent/analysis/query` in `backend/src/api/agent.py`, calling the same `AnalysisService` functions T011's endpoints use (depends on T009, T010, T006)
+- [X] T014 [US2] Build the `SpendingBreakdown` component (period picker + ranked breakdown table; a two-period picker + comparison table) in `frontend/src/components/SpendingBreakdown.tsx`
+- [X] T015 [US2] Add `getBreakdown`/`getComparison` to `frontend/src/services/analysisApi.ts` and wire `SpendingBreakdown` into `frontend/src/app/analysis/page.tsx`
 
 **Checkpoint**: User Stories 1 AND 2 both work independently.
 
@@ -74,11 +74,11 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 **Independent Test**: Post a consistent trend of expense activity across several past periods, request a forecast for the next period, and confirm the forecast is clearly labeled an estimate, is reasonably consistent with the trend, and comes with a plain-language explanation of its method and data.
 
-- [ ] T016 [US3] Implement `AnalysisService.forecast(session, target_start, target_end)` — gathers up to the past 6 complete calendar months' `profit_and_loss` `total_expenses` (`research.md`'s lookback window); if fewer than 3 of those months have any posted activity, returns `status="insufficient_data"` (FR-009); otherwise fits `scikit-learn`'s `LinearRegression` on month-index → `total_expenses`, predicts the target period, and returns `is_estimate=true` with the method description and the historical points used — in `backend/src/services/analysis_service.py`, per FR-007, FR-008, FR-009, `data-model.md`
-- [ ] T017 [US3] Implement `GET /api/analysis/forecast` in `backend/src/api/analysis.py`, per `contracts/analysis-api.md` (depends on T016)
-- [ ] T018 [US3] Wire the `forecast` branch into `POST /api/agent/analysis/query` in `backend/src/api/agent.py`, calling the same `AnalysisService.forecast` function T017's endpoint uses (depends on T016, T006)
-- [ ] T019 [US3] Build the `SpendingForecast` component (future-period picker, forecast figure clearly labeled an estimate, method and historical-points explanation) in `frontend/src/components/SpendingForecast.tsx`
-- [ ] T020 [US3] Add `getForecast` to `frontend/src/services/analysisApi.ts` and wire `SpendingForecast` into `frontend/src/app/analysis/page.tsx`
+- [X] T016 [US3] Implement `AnalysisService.forecast(session, target_start, target_end)` — gathers up to the past 6 complete calendar months' `profit_and_loss` `total_expenses` (`research.md`'s lookback window); if fewer than 3 of those months have any posted activity, returns `status="insufficient_data"` (FR-009); otherwise fits `scikit-learn`'s `LinearRegression` on month-index → `total_expenses`, predicts the target period, and returns `is_estimate=true` with the method description and the historical points used — in `backend/src/services/analysis_service.py`, per FR-007, FR-008, FR-009, `data-model.md`
+- [X] T017 [US3] Implement `GET /api/analysis/forecast` in `backend/src/api/analysis.py`, per `contracts/analysis-api.md` (depends on T016)
+- [X] T018 [US3] Wire the `forecast` branch into `POST /api/agent/analysis/query` in `backend/src/api/agent.py`, calling the same `AnalysisService.forecast` function T017's endpoint uses (depends on T016, T006)
+- [X] T019 [US3] Build the `SpendingForecast` component (future-period picker, forecast figure clearly labeled an estimate, method and historical-points explanation) in `frontend/src/components/SpendingForecast.tsx`
+- [X] T020 [US3] Add `getForecast` to `frontend/src/services/analysisApi.ts` and wire `SpendingForecast` into `frontend/src/app/analysis/page.tsx`
 
 **Checkpoint**: User Stories 1, 2, AND 3 all work independently.
 
@@ -92,8 +92,8 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 > **Note**: `resolve_spending_request` (T004) and the query endpoint's routing (T006, extended by T013 and T018) already cover all four request kinds by the time User Story 3 completes — the resolver's classification vocabulary was written once, upfront, in Phase 3, since correctly discriminating "amount" from the other three kinds requires knowing about all of them from the start. This phase is about confirming the natural-language path for `breakdown`/`comparison`/`forecast` questions actually behaves per FR-010, not building new backend machinery — the groundwork was laid incrementally across User Stories 1–3 rather than deferred to its own late cross-cutting phase the way `005-reporting`'s NL layer was.
 
-- [ ] T021 [US4] Verify and, if needed, adjust `resolve_spending_request`'s prompt so breakdown-, comparison-, and forecast-shaped natural-language questions reliably classify into the correct `request_kind` with correctly extracted periods, in `backend/src/agent/analysis_tools.py`, per FR-010, spec Edge Cases
-- [ ] T022 [US4] Confirm `frontend/src/components/SpendingQuery.tsx` correctly renders `breakdown`/`comparison`/`forecast` result shapes returned via the chat path (not just `amount`), reusing `SpendingBreakdown`/`SpendingForecast`'s rendering where practical
+- [X] T021 [US4] Verify and, if needed, adjust `resolve_spending_request`'s prompt so breakdown-, comparison-, and forecast-shaped natural-language questions reliably classify into the correct `request_kind` with correctly extracted periods, in `backend/src/agent/analysis_tools.py`, per FR-010, spec Edge Cases
+- [X] T022 [US4] Confirm `frontend/src/components/SpendingQuery.tsx` correctly renders `breakdown`/`comparison`/`forecast` result shapes returned via the chat path (not just `amount`), reusing `SpendingBreakdown`/`SpendingForecast`'s rendering where practical
 
 **Checkpoint**: All four user stories are independently functional.
 
@@ -101,9 +101,9 @@ description: "Task list for analysis and advisory NL Q&A feature implementation"
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T023 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the spending-analysis flow, the deterministic forecaster, and the `resolve_spending_request`/`narrate_spending_result` tools — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
-- [ ] T024 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
-- [ ] T025 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
+- [X] T023 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the spending-analysis flow, the deterministic forecaster, and the `resolve_spending_request`/`narrate_spending_result` tools — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
+- [X] T024 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
+- [X] T025 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
 
 ---
 
