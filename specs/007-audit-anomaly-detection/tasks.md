@@ -28,11 +28,11 @@ description: "Task list for audit and anomaly detection feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T003 [P] Create the `AuditRun` SQLAlchemy model (`id`, `start`, `end`, `entries_evaluated`, `entries_flagged`, `status` enum(`completed`, `insufficient_data`), `created_at`) in `backend/src/models/audit_run.py`, per `data-model.md`
-- [ ] T004 [P] Create the `AnomalyFlag` SQLAlchemy model (`id`, `audit_run_id` FK `ON DELETE CASCADE`, `journal_entry_id` FK `ON DELETE CASCADE`, `score`, `reason_categories` (array of text), `explanation`, `resolution` enum(`unreviewed`, `confirmed_issue`, `false_positive`, `no_action_needed`) default `unreviewed`, `resolved_at`, `created_at`) in `backend/src/models/anomaly_flag.py`, per `data-model.md`
-- [ ] T005 Write the Alembic migration creating both tables from T003–T004 in `backend/migrations/versions/` (depends on T003, T004)
-- [ ] T006 [P] Create `AuditRun`/`AnomalyFlag` Pydantic schemas (`AuditRunResponse` with a nested `flags` list, `AnomalyFlagResponse`, `AuditRunSummary` for the history list, `ResolveFlagRequest`) in `backend/src/schemas/audit.py`, per `contracts/audit-api.md`
-- [ ] T007 [P] Implement `AuditService._evaluate_entries(session, start, end)` (queries active posted journal entries — `status='posted' AND reverses_journal_entry_id IS NULL`, reused from `002`/`005` — within `[start, end]`, defaulting to the whole ledger to date when omitted) in `backend/src/services/audit_service.py`, per `research.md`'s active-postings decision, FR-010
+- [X] T003 [P] Create the `AuditRun` SQLAlchemy model (`id`, `start`, `end`, `entries_evaluated`, `entries_flagged`, `status` enum(`completed`, `insufficient_data`), `created_at`) in `backend/src/models/audit_run.py`, per `data-model.md`
+- [X] T004 [P] Create the `AnomalyFlag` SQLAlchemy model (`id`, `audit_run_id` FK `ON DELETE CASCADE`, `journal_entry_id` FK `ON DELETE CASCADE`, `score`, `reason_categories` (array of text), `explanation`, `resolution` enum(`unreviewed`, `confirmed_issue`, `false_positive`, `no_action_needed`) default `unreviewed`, `resolved_at`, `created_at`) in `backend/src/models/anomaly_flag.py`, per `data-model.md`
+- [X] T005 Write the Alembic migration creating both tables from T003–T004 in `backend/migrations/versions/` (depends on T003, T004)
+- [X] T006 [P] Create `AuditRun`/`AnomalyFlag` Pydantic schemas (`AuditRunResponse` with a nested `flags` list, `AnomalyFlagResponse`, `AuditRunSummary` for the history list, `ResolveFlagRequest`) in `backend/src/schemas/audit.py`, per `contracts/audit-api.md`
+- [X] T007 [P] Implement `AuditService._evaluate_entries(session, start, end)` (queries active posted journal entries — `status='posted' AND reverses_journal_entry_id IS NULL`, reused from `002`/`005` — within `[start, end]`, defaulting to the whole ledger to date when omitted) in `backend/src/services/audit_service.py`, per `research.md`'s active-postings decision, FR-010
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
