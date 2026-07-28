@@ -19,6 +19,16 @@ export interface TrialBalanceResponse {
   is_balanced: boolean;
 }
 
+export interface ProfitAndLossResponse {
+  start: string;
+  end: string;
+  revenue_lines: AccountBalance[];
+  total_revenue: string;
+  expense_lines: AccountBalance[];
+  total_expenses: string;
+  net_profit: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -43,4 +53,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export function getTrialBalance(asOf?: string): Promise<TrialBalanceResponse> {
   const qs = asOf ? `?as_of=${asOf}` : "";
   return request(`/api/reports/trial-balance${qs}`);
+}
+
+export function getProfitAndLoss(
+  start?: string,
+  end?: string
+): Promise<ProfitAndLossResponse> {
+  const qs = new URLSearchParams(
+    Object.entries({ start, end }).filter(([, v]) => v) as [string, string][]
+  ).toString();
+  return request(`/api/reports/profit-and-loss${qs ? `?${qs}` : ""}`);
 }

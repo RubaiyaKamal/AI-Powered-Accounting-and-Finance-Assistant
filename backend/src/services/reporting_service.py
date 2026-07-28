@@ -1,3 +1,4 @@
+import calendar
 import datetime
 from decimal import Decimal
 
@@ -6,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.account import Account
 from src.models.journal_entry import JournalEntry
-from src.schemas.reports import AccountBalance, TrialBalanceResponse
+from src.schemas.reports import AccountBalance, ProfitAndLossResponse, TrialBalanceResponse
 
 DEBIT_NORMAL_TYPES = {"asset", "expense"}
 
@@ -112,4 +113,38 @@ async def trial_balance(
         total_debits=total_debits,
         total_credits=total_credits,
         is_balanced=total_debits == total_credits,
+    )
+
+
+def _current_month_range(today: datetime.date) -> tuple[datetime.date, datetime.date]:
+    last_day = calendar.monthrange(today.year, today.month)[1]
+    return today.replace(day=1), today.replace(day=last_day)
+
+
+async def profit_and_loss(
+    session: AsyncSession,
+    start: datetime.date | None = None,
+    end: datetime.date | None = None,
+) -> ProfitAndLossResponse:
+    # Per contracts/reports-api.md: if either bound is omitted, both default
+    # together to the current calendar month, rather than mixing one
+    # explicit bound with an inferred other.
+    if start is None or end is None:
+        start, end = _current_month_range(datetime.date.today())
+    if end < start:
+        raise ValidationError("end must not be before start")
+
+    lines = await _account_balances(session, start=start, end=end)
+    revenue_lines = [line for line in lines if line.account_type == "revenue"]
+    expense_lines = [line for line in lines if line.account_type == "expense"]
+    total_revenue = sum((line.balance for line in revenue_lines), Decimal("0.00"))
+    total_expenses = sum((line.balance for line in expense_lines), Decimal("0.00"))
+    return ProfitAndLossResponse(
+        start=start,
+        end=end,
+        revenue_lines=revenue_lines,
+        total_revenue=total_revenue,
+        expense_lines=expense_lines,
+        total_expenses=total_expenses,
+        net_profit=total_revenue - total_expenses,
     )

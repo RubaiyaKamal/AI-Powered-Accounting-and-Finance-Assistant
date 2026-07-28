@@ -56,10 +56,10 @@ description: "Task list for financial reporting feature implementation"
 
 **Independent Test**: Post expense journal entries dated within a chosen period, request a P&L for that period, and confirm the expense total matches the sum of those entries and nets out to the correct profit/loss figure.
 
-- [ ] T009 [US2] Implement `ReportingService.profit_and_loss(session, start, end)` (defaults both to the current calendar month when omitted; builds `revenue_lines`/`total_revenue`, `expense_lines`/`total_expenses`, `net_profit` from `_account_balances`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-003 (depends on T003)
-- [ ] T010 [US2] Implement `GET /api/reports/profit-and-loss` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T009)
-- [ ] T011 [US2] Extend `ReportViewer` with the Profit & Loss report type (start/end range inputs, revenue/expense line rendering, net profit/loss) in `frontend/src/components/ReportViewer.tsx` (depends on T007)
-- [ ] T012 [US2] Add `getProfitAndLoss(start?, end?)` to `frontend/src/services/reportsApi.ts`
+- [X] T009 [US2] Implement `ReportingService.profit_and_loss(session, start, end)` (defaults both to the current calendar month when omitted; builds `revenue_lines`/`total_revenue`, `expense_lines`/`total_expenses`, `net_profit` from `_account_balances`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-003 (depends on T003)
+- [X] T010 [US2] Implement `GET /api/reports/profit-and-loss` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T009)
+- [X] T011 [US2] Extend `ReportViewer` with the Profit & Loss report type (start/end range inputs, revenue/expense line rendering, net profit/loss) in `frontend/src/components/ReportViewer.tsx` (depends on T007)
+- [X] T012 [US2] Add `getProfitAndLoss(start?, end?)` to `frontend/src/services/reportsApi.ts`
 
 **Checkpoint**: User Stories 1 AND 2 both work independently.
 

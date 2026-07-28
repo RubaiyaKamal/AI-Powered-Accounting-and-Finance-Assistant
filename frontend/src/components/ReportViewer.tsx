@@ -3,16 +3,21 @@
 import { useEffect, useState } from "react";
 import {
   ApiError,
+  ProfitAndLossResponse,
   TrialBalanceResponse,
+  getProfitAndLoss,
   getTrialBalance,
 } from "@/services/reportsApi";
 
-type ReportType = "trial_balance";
+type ReportType = "trial_balance" | "profit_and_loss";
 
 export default function ReportViewer() {
   const [reportType, setReportType] = useState<ReportType>("trial_balance");
   const [asOf, setAsOf] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
   const [trialBalance, setTrialBalance] = useState<TrialBalanceResponse | null>(null);
+  const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function load() {
@@ -23,10 +28,16 @@ export default function ReportViewer() {
         .catch((err) =>
           setError(err instanceof ApiError ? err.message : "Failed to load report.")
         );
+    } else if (reportType === "profit_and_loss") {
+      getProfitAndLoss(start || undefined, end || undefined)
+        .then(setProfitAndLoss)
+        .catch((err) =>
+          setError(err instanceof ApiError ? err.message : "Failed to load report.")
+        );
     }
   }
 
-  useEffect(load, [reportType, asOf]);
+  useEffect(load, [reportType, asOf, start, end]);
 
   return (
     <div className="panel">
@@ -41,6 +52,7 @@ export default function ReportViewer() {
             onChange={(e) => setReportType(e.target.value as ReportType)}
           >
             <option value="trial_balance">Trial Balance</option>
+            <option value="profit_and_loss">Profit &amp; Loss</option>
           </select>
         </div>
         {reportType === "trial_balance" && (
@@ -53,6 +65,28 @@ export default function ReportViewer() {
               onChange={(e) => setAsOf(e.target.value)}
             />
           </div>
+        )}
+        {reportType === "profit_and_loss" && (
+          <>
+            <div className="field">
+              <label htmlFor="pl-start">Start</label>
+              <input
+                id="pl-start"
+                type="date"
+                value={start}
+                onChange={(e) => setStart(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="pl-end">End</label>
+              <input
+                id="pl-end"
+                type="date"
+                value={end}
+                onChange={(e) => setEnd(e.target.value)}
+              />
+            </div>
+          </>
         )}
       </div>
 
@@ -106,6 +140,82 @@ export default function ReportViewer() {
                   <strong>{trialBalance.total_credits}</strong>
                 </td>
                 <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </>
+      )}
+
+      {reportType === "profit_and_loss" && profitAndLoss && (
+        <>
+          <p>
+            {profitAndLoss.start} to {profitAndLoss.end}
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan={2}>
+                  <strong>Revenue</strong>
+                </td>
+              </tr>
+              {profitAndLoss.revenue_lines.map((line) => (
+                <tr key={line.account_id}>
+                  <td>{line.account_name}</td>
+                  <td>{line.balance}</td>
+                </tr>
+              ))}
+              {profitAndLoss.revenue_lines.length === 0 && (
+                <tr>
+                  <td colSpan={2}>No revenue in this period.</td>
+                </tr>
+              )}
+              <tr>
+                <td>
+                  <strong>Total Revenue</strong>
+                </td>
+                <td>
+                  <strong>{profitAndLoss.total_revenue}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2}>
+                  <strong>Expenses</strong>
+                </td>
+              </tr>
+              {profitAndLoss.expense_lines.map((line) => (
+                <tr key={line.account_id}>
+                  <td>{line.account_name}</td>
+                  <td>{line.balance}</td>
+                </tr>
+              ))}
+              {profitAndLoss.expense_lines.length === 0 && (
+                <tr>
+                  <td colSpan={2}>No expenses in this period.</td>
+                </tr>
+              )}
+              <tr>
+                <td>
+                  <strong>Total Expenses</strong>
+                </td>
+                <td>
+                  <strong>{profitAndLoss.total_expenses}</strong>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>
+                  <strong>Net Profit / (Loss)</strong>
+                </td>
+                <td>
+                  <strong>{profitAndLoss.net_profit}</strong>
+                </td>
               </tr>
             </tfoot>
           </table>
