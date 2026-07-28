@@ -13,3 +13,6 @@ AGENT_MODEL = os.environ.get("AGENT_MODEL", "gpt-4o-mini")
 ACCOUNT_CODING_CONFIDENCE_THRESHOLD = float(
     os.environ.get("ACCOUNT_CODING_CONFIDENCE_THRESHOLD", "0.8")
 )
+
+RECEIPT_IMAGE_ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
+RECEIPT_IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024

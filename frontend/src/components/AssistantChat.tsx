@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { ApiError, createExpense, parseExpenseDraft } from "@/services/expensesApi";
+import { useRef, useState } from "react";
+import {
+  ApiError,
+  createExpense,
+  parseExpenseDraft,
+  parseReceiptImage,
+} from "@/services/expensesApi";
 
 interface Draft {
   amount: string;
@@ -10,12 +15,16 @@ interface Draft {
   description: string;
 }
 
+type DraftSource = "natural_language" | "receipt_image";
+
 export default function AssistantChat({ onCreated }: { onCreated?: () => void }) {
   const [text, setText] = useState("");
   const [followUp, setFollowUp] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [draftSource, setDraftSource] = useState<DraftSource>("natural_language");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -29,6 +38,7 @@ export default function AssistantChat({ onCreated }: { onCreated?: () => void })
         setDraft(null);
       } else if (result.draft) {
         setDraft(result.draft);
+        setDraftSource("natural_language");
         setFollowUp(null);
       }
     } catch (err) {
@@ -36,6 +46,29 @@ export default function AssistantChat({ onCreated }: { onCreated?: () => void })
     } finally {
       setBusy(false);
       setText("");
+    }
+  }
+
+  async function handleUploadReceipt(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    setBusy(true);
+    try {
+      const result = await parseReceiptImage(file);
+      if (result.status === "needs_clarification") {
+        setFollowUp(result.follow_up_question ?? "Could you provide more detail?");
+        setDraft(null);
+      } else if (result.draft) {
+        setDraft(result.draft);
+        setDraftSource("receipt_image");
+        setFollowUp(null);
+      }
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Could not read that receipt.");
+    } finally {
+      setBusy(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -49,7 +82,7 @@ export default function AssistantChat({ onCreated }: { onCreated?: () => void })
         date: draft.date,
         category_name_hint: draft.category_name_hint,
         description: draft.description,
-        source: "natural_language",
+        source: draftSource,
       });
       setDraft(null);
       onCreated?.();
@@ -81,6 +114,21 @@ export default function AssistantChat({ onCreated }: { onCreated?: () => void })
           Send
         </button>
       </form>
+
+      <div style={{ marginTop: "0.75rem" }}>
+        <label htmlFor="receipt-upload" className="btn-secondary" style={{ cursor: "pointer" }}>
+          Upload a receipt/invoice photo
+        </label>
+        <input
+          id="receipt-upload"
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleUploadReceipt}
+          disabled={busy}
+          style={{ display: "none" }}
+        />
+      </div>
 
       {followUp && (
         <p style={{ marginTop: "1rem" }}>

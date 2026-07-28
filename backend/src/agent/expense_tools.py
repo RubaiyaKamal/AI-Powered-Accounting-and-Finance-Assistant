@@ -1,3 +1,4 @@
+import base64
 import datetime
 import json
 import re
@@ -120,6 +121,73 @@ async def parse_expense_draft(text: str) -> dict:
         return json.loads(result.final_output)
     except (json.JSONDecodeError, TypeError):
         return _fallback_parse(text)
+
+
+async def parse_receipt_image(image_bytes: bytes, content_type: str) -> dict:
+    """Parse a receipt/invoice image into a draft expense entry, or ask a follow-up question.
+
+    Returns the exact same shape as parse_expense_draft (ready_for_confirmation
+    or needs_clarification) — this is the same draft-then-confirm contract
+    reached through an image instead of free text (constitution Principle
+    II: never writes to the database). No separate OCR step; the image is
+    sent directly to GPT-4o mini's multimodal input (research.md).
+    """
+    if not OPENAI_API_KEY:
+        return {
+            "status": "needs_clarification",
+            "missing_field": "amount",
+            "follow_up_question": (
+                "I can't read images without an OpenAI API key configured — "
+                "please enter this expense manually or describe it in words instead."
+            ),
+        }
+
+    from agents import Agent, Runner  # imported lazily, same as parse_expense_draft above
+
+    agent = Agent(
+        name="ReceiptImageParser",
+        model=AGENT_MODEL,
+        instructions=(
+            "Extract an expense entry draft from the attached receipt or invoice image. "
+            "Respond with ONLY a JSON object, no prose, in one of these two shapes:\n"
+            '{"status": "ready_for_confirmation", "draft": '
+            '{"amount": "<decimal string>", "date": "<YYYY-MM-DD>", '
+            '"category_name_hint": "<vendor name and/or item description>", '
+            '"description": "<vendor name and/or item description>"}}\n'
+            'or, if the amount or date cannot be confidently read from the image:\n'
+            '{"status": "needs_clarification", "missing_field": "amount"|"date", '
+            '"follow_up_question": "<a specific question for the missing field>"}\n'
+            f"Today's date is {datetime.date.today().isoformat()}; only use it if the "
+            "receipt itself doesn't show a date."
+        ),
+    )
+    encoded_image = base64.b64encode(image_bytes).decode("ascii")
+    result = await Runner.run(
+        agent,
+        [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": "Extract the expense details from this receipt image.",
+                    },
+                    {
+                        "type": "input_image",
+                        "image_url": f"data:{content_type};base64,{encoded_image}",
+                    },
+                ],
+            }
+        ],
+    )
+    try:
+        return json.loads(result.final_output)
+    except (json.JSONDecodeError, TypeError):
+        return {
+            "status": "needs_clarification",
+            "missing_field": "amount",
+            "follow_up_question": "I couldn't read this receipt clearly — what was the amount?",
+        }
 
 
 async def suggest_category(description: str, categories: list[Category]) -> str:
