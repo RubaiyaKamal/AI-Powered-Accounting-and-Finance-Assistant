@@ -13,6 +13,7 @@ from src.schemas.expense_entry import (
     ExpenseEntryUpdate,
 )
 from src.services import expense_entry_service as service
+from src.services import ledger_service
 
 router = APIRouter(prefix="/api/expenses", tags=["expenses"])
 
@@ -91,6 +92,7 @@ async def delete_expense(
     entry_id: uuid.UUID, session: AsyncSession = Depends(get_session)
 ) -> None:
     try:
+        await ledger_service.reverse_journal_entry_for_expense(session, entry_id)
         await service.delete_entry(session, entry_id)
     except service.NotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc

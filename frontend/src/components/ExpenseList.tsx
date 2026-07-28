@@ -10,6 +10,7 @@ import {
   listExpenses,
   updateExpense,
 } from "@/services/expensesApi";
+import AccountCoding from "./AccountCoding";
 import ExpenseHistory from "./ExpenseHistory";
 
 export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
@@ -119,6 +120,7 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
             <th>Amount</th>
             <th>Category</th>
             <th>Description</th>
+            <th>Ledger Coding</th>
             <th />
           </tr>
         </thead>
@@ -151,6 +153,9 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
                   </td>
+                  <td>
+                    <AccountCoding expenseId={entry.id} />
+                  </td>
                   <td style={{ display: "flex", gap: "0.5rem" }}>
                     <button className="btn-primary" onClick={() => saveEdit(entry.id)}>
                       Save
@@ -174,6 +179,9 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
                     )}
                   </td>
                   <td>{entry.description ?? "—"}</td>
+                  <td>
+                    <AccountCoding expenseId={entry.id} />
+                  </td>
                   <td style={{ display: "flex", gap: "0.5rem" }}>
                     <button className="btn-secondary" onClick={() => startEdit(entry)}>
                       Edit
@@ -189,7 +197,7 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
               )}
               {expandedId === entry.id && expandedDetail && (
                 <tr>
-                  <td colSpan={5}>
+                  <td colSpan={6}>
                     <ExpenseHistory history={expandedDetail.edit_history} />
                   </td>
                 </tr>
@@ -198,7 +206,7 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
           ))}
           {entries.length === 0 && (
             <tr>
-              <td colSpan={5}>No expenses recorded yet.</td>
+              <td colSpan={6}>No expenses recorded yet.</td>
             </tr>
           )}
         </tbody>
