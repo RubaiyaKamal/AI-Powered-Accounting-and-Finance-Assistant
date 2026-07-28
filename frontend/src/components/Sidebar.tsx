@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/reports", label: "Reports" },
   { href: "/audit", label: "Audit" },
   { href: "/tax", label: "Tax" },
+  { href: "/analysis", label: "Analysis" },
 ];
 
 export default function Sidebar() {
