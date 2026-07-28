@@ -10,6 +10,7 @@ DATABASE_URL = os.environ.get(
 )
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 AGENT_MODEL = os.environ.get("AGENT_MODEL", "gpt-4o-mini")
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "text-embedding-3-small")
 ACCOUNT_CODING_CONFIDENCE_THRESHOLD = float(
     os.environ.get("ACCOUNT_CODING_CONFIDENCE_THRESHOLD", "0.8")
 )

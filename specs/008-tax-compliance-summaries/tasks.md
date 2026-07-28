@@ -27,12 +27,12 @@ description: "Task list for tax and compliance summaries feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 [P] Create the `TaxRulesDocument` SQLAlchemy model (`id`, `title`, `content`, `created_at`) in `backend/src/models/tax_rules_document.py`, per `data-model.md`
-- [ ] T003 [P] Create the `TaxRulesDocumentChunk` SQLAlchemy model (`id`, `document_id` FK `ON DELETE CASCADE`, `chunk_index`, `chunk_text`, `embedding` nullable array of float, `created_at`) in `backend/src/models/tax_rules_document_chunk.py`, per `data-model.md`
-- [ ] T004 [P] Create the `TaxSummary` SQLAlchemy model (`id`, `start`, `end`, `status` enum(`draft`, `signed_off`) default `draft`, `total_revenue`, `total_expenses`, `net_profit`, `cited_passages` JSON, `narrative`, `generated_at`, `signed_off_at` nullable) in `backend/src/models/tax_summary.py`, per `data-model.md`
-- [ ] T005 Write the Alembic migration creating all three tables from T002–T004 in `backend/migrations/versions/` (depends on T002, T003, T004)
-- [ ] T006 [P] Create the Pydantic schemas (`TaxRulesDocumentResponse`, `TaxRulesDocumentSummary`, `TaxRulesDocumentListResponse`, `TaxSummaryResponse` with a `cited_passages` list, `TaxSummarySummary` for the history list, `TaxSummaryListResponse`, `TaxSummaryTriggerRequest`) in `backend/src/schemas/tax.py`, per `contracts/tax-api.md`
-- [ ] T007 [P] Implement `embed_text(text)` in `backend/src/agent/tax_tools.py` — calls the OpenAI embeddings API via the `openai` client already available through `openai-agents`; returns `None` when no `OPENAI_API_KEY` is configured, per `research.md`'s retrieval decision
+- [X] T002 [P] Create the `TaxRulesDocument` SQLAlchemy model (`id`, `title`, `content`, `created_at`) in `backend/src/models/tax_rules_document.py`, per `data-model.md`
+- [X] T003 [P] Create the `TaxRulesDocumentChunk` SQLAlchemy model (`id`, `document_id` FK `ON DELETE CASCADE`, `chunk_index`, `chunk_text`, `embedding` nullable array of float, `created_at`) in `backend/src/models/tax_rules_document_chunk.py`, per `data-model.md`
+- [X] T004 [P] Create the `TaxSummary` SQLAlchemy model (`id`, `start`, `end`, `status` enum(`draft`, `signed_off`) default `draft`, `total_revenue`, `total_expenses`, `net_profit`, `cited_passages` JSON, `narrative`, `generated_at`, `signed_off_at` nullable) in `backend/src/models/tax_summary.py`, per `data-model.md`
+- [X] T005 Write the Alembic migration creating all three tables from T002–T004 in `backend/migrations/versions/` (depends on T002, T003, T004)
+- [X] T006 [P] Create the Pydantic schemas (`TaxRulesDocumentResponse`, `TaxRulesDocumentSummary`, `TaxRulesDocumentListResponse`, `TaxSummaryResponse` with a `cited_passages` list, `TaxSummarySummary` for the history list, `TaxSummaryListResponse`, `TaxSummaryTriggerRequest`) in `backend/src/schemas/tax.py`, per `contracts/tax-api.md`
+- [X] T007 [P] Implement `embed_text(text)` in `backend/src/agent/tax_tools.py` — calls the OpenAI embeddings API via the `openai` client already available through `openai-agents`; returns `None` when no `OPENAI_API_KEY` is configured, per `research.md`'s retrieval decision
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
