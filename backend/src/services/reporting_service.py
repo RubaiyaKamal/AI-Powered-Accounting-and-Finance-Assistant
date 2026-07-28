@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.account import Account
 from src.models.journal_entry import JournalEntry
-from src.schemas.reports import AccountBalance
+from src.schemas.reports import AccountBalance, TrialBalanceResponse
 
 DEBIT_NORMAL_TYPES = {"asset", "expense"}
 
@@ -97,3 +97,19 @@ async def _account_balances(
             )
         )
     return balances
+
+
+async def trial_balance(
+    session: AsyncSession, as_of: datetime.date | None = None
+) -> TrialBalanceResponse:
+    as_of = as_of or datetime.date.today()
+    lines = await _account_balances(session, as_of=as_of)
+    total_debits = sum((line.debit_total for line in lines), Decimal("0.00"))
+    total_credits = sum((line.credit_total for line in lines), Decimal("0.00"))
+    return TrialBalanceResponse(
+        as_of=as_of,
+        lines=lines,
+        total_debits=total_debits,
+        total_credits=total_credits,
+        is_balanced=total_debits == total_credits,
+    )

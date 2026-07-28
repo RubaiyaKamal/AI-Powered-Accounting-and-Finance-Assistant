@@ -40,11 +40,11 @@ description: "Task list for financial reporting feature implementation"
 
 **Independent Test**: Post a handful of journal entries, request a trial balance as of today, and confirm every account with activity appears with the correct balance and that total debits equal total credits.
 
-- [ ] T004 [US1] Implement `ReportingService.trial_balance(session, as_of)` (defaults `as_of` to today; builds `lines`, `total_debits`, `total_credits`, `is_balanced` from `_account_balances`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-002, FR-009 (depends on T003)
-- [ ] T005 [US1] Implement `GET /api/reports/trial-balance` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T004)
-- [ ] T006 [US1] Register the reports router in `backend/src/main.py`
-- [ ] T007 [US1] Build the `ReportViewer` component (report-type selector defaulting to Trial Balance, an `as_of` date picker, and a rendered statement table showing `is_balanced`) in `frontend/src/components/ReportViewer.tsx`
-- [ ] T008 [US1] Add `getTrialBalance(asOf?)` to `frontend/src/services/reportsApi.ts`, build the reports page wiring `ReportViewer` in `frontend/src/app/reports/page.tsx`, and add a nav link in `frontend/src/app/layout.tsx`
+- [X] T004 [US1] Implement `ReportingService.trial_balance(session, as_of)` (defaults `as_of` to today; builds `lines`, `total_debits`, `total_credits`, `is_balanced` from `_account_balances`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-002, FR-009 (depends on T003)
+- [X] T005 [US1] Implement `GET /api/reports/trial-balance` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T004)
+- [X] T006 [US1] Register the reports router in `backend/src/main.py`
+- [X] T007 [US1] Build the `ReportViewer` component (report-type selector defaulting to Trial Balance, an `as_of` date picker, and a rendered statement table showing `is_balanced`) in `frontend/src/components/ReportViewer.tsx`
+- [X] T008 [US1] Add `getTrialBalance(asOf?)` to `frontend/src/services/reportsApi.ts`, build the reports page wiring `ReportViewer` in `frontend/src/app/reports/page.tsx`, and add a nav link in `frontend/src/app/layout.tsx`
 
 **Checkpoint**: User Story 1 is fully functional and independently testable — this is the MVP.
 

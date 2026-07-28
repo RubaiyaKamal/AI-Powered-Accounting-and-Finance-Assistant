@@ -26,8 +26,11 @@ export default function RootLayout({
             <Link href="/ledger" style={{ color: "inherit", marginRight: "1rem" }}>
               Ledger
             </Link>
-            <Link href="/reconciliation" style={{ color: "inherit" }}>
+            <Link href="/reconciliation" style={{ color: "inherit", marginRight: "1rem" }}>
               Reconciliation
+            </Link>
+            <Link href="/reports" style={{ color: "inherit" }}>
+              Reports
             </Link>
           </nav>
         </header>
