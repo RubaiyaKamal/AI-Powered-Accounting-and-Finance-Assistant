@@ -11,7 +11,7 @@
         </mxCell>
 
         <!-- Frontend -->
-        <mxCell id="frontend" value="Next.js Frontend (TypeScript)&#10;Expenses / Income / Ledgers / Reports / AI Chat UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1C1C1E;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+        <mxCell id="frontend" value="Next.js Frontend (TypeScript)&#10;Expenses / Income / Ledgers / Reports / Audit / AI Chat UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1C1C1E;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
           <mxGeometry x="390" y="150" width="320" height="70" as="geometry" />
         </mxCell>
 
@@ -26,18 +26,31 @@
         </mxCell>
 
         <!-- Agent tools -->
-        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match,&#10;resolve_report_request (question → report type + date/period),&#10;narrate_report (computed result → prose)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="780" y="410" width="280" height="130" as="geometry" />
+        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match,&#10;resolve_report_request (question → report type + date/period),&#10;narrate_report (computed result → prose),&#10;resolve_audit_request (question → date range),&#10;narrate_audit_run (run result → prose),&#10;explain_flags (flagged entries → prose, batched per run)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="780" y="410" width="280" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- Anomaly detector -->
+        <mxCell id="detector" value="Anomaly Detector (audit_service.py)&#10;IsolationForest (scikit-learn) + duplicate/round-number rule checks&#10;— deterministic, never the LLM (Constitution Principle II)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="640" width="320" height="70" as="geometry" />
         </mxCell>
 
         <!-- Database -->
-        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history, accounts,&#10;account_codings, journal_entries, bank_transactions, matches" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
-          <mxGeometry x="390" y="440" width="320" height="80" as="geometry" />
+        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history, accounts,&#10;account_codings, journal_entries, bank_transactions, matches,&#10;audit_runs, anomaly_flags" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="390" y="440" width="320" height="90" as="geometry" />
         </mxCell>
 
         <!-- Principle II note -->
-        <mxCell id="note" value="Agent &amp; tools only draft / suggest / read — they never write financial data directly.&#10;Every write (create / edit / delete) goes through the same validated backend endpoint,&#10;only after the human confirms (Constitution Principle II)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#EF4444;fontColor=#1C1C1E;fontSize=11;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="740" y="560" width="360" height="70" as="geometry" />
+        <mxCell id="note" value="Agent &amp; tools only draft / suggest / explain / read — they never write financial data or decide an anomaly flag directly.&#10;Every write (create / edit / delete) goes through the same validated backend endpoint, and every anomaly flag&#10;comes from the deterministic detector above, only after the human confirms or reviews (Constitution Principle II)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#EF4444;fontColor=#1C1C1E;fontSize=11;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="640" width="360" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e11" value="Reads active postings, writes audit_runs/anomaly_flags" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="detector" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e12" value="3c. Trigger audit run" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="detector">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
         <!-- Edges -->

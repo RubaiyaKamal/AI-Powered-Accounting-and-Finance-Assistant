@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/ledger", label: "Ledger" },
   { href: "/reconciliation", label: "Reconciliation" },
   { href: "/reports", label: "Reports" },
+  { href: "/audit", label: "Audit" },
 ];
 
 export default function Sidebar() {
