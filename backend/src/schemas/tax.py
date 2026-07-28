@@ -80,3 +80,12 @@ class TaxSummarySummary(BaseModel):
 class TaxSummaryListResponse(BaseModel):
     items: list[TaxSummarySummary]
     total: int
+
+
+class TaxQueryRequest(BaseModel):
+    question: str
+
+
+class TaxQueryResponse(BaseModel):
+    data: dict | None
+    narrative: str

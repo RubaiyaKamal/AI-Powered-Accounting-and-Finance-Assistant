@@ -1,6 +1,27 @@
+import datetime
 import json
+import re
 
 from src.config import AGENT_MODEL, EMBEDDING_MODEL, OPENAI_API_KEY
+
+_CODE_FENCE_RE = re.compile(r"```(?:json)?\s*(.*?)\s*```", re.DOTALL)
+
+
+def _strip_code_fence(text: str) -> str:
+    # gpt-4o-mini sometimes wraps a JSON reply in a markdown code fence
+    # despite being told "no prose" — strip it so json.loads still
+    # succeeds rather than falling back unnecessarily.
+    match = _CODE_FENCE_RE.search(text)
+    return match.group(1) if match else text
+
+
+def _parse_date(value: object) -> datetime.date | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        return datetime.date.fromisoformat(value)
+    except ValueError:
+        return None
 
 
 async def embed_text(text: str) -> list[float] | None:
@@ -75,3 +96,48 @@ async def draft_summary_narrative(figures: dict, cited_passages: list[dict]) -> 
     )
     result = await Runner.run(agent, prompt)
     return result.final_output.strip()
+
+
+async def resolve_summary_request(question: str, today: datetime.date) -> dict:
+    """Resolve a natural-language summary request into a date range.
+
+    Sees only the question text and today's date — never ledger data or
+    the reference library (constitution Principle II). Mirrors
+    `resolve_audit_request`'s "unresolvable, ask rather than guess" shape
+    (research.md) — guessing a tax period is exactly what this feature's
+    regulatory-risk framing argues against. Falls back to "resolvable,
+    current calendar month" when no OPENAI_API_KEY is configured.
+    """
+    if not OPENAI_API_KEY:
+        return {"resolvable": True, "start": None, "end": None}
+
+    from agents import Agent, Runner
+
+    agent = Agent(
+        name="TaxSummaryRequestResolver",
+        model=AGENT_MODEL,
+        instructions=(
+            "Determine whether a business owner's question clearly implies a date "
+            "range for a tax/compliance summary (e.g., 'this month', 'last quarter'). "
+            "If a specific period is implied, return its start and end date. If the "
+            "question gives you no way to tell what period is meant, set resolvable "
+            "to false rather than guessing. Reply with ONLY a JSON object, no prose: "
+            '{"resolvable": true|false, "start": "YYYY-MM-DD"|null, '
+            '"end": "YYYY-MM-DD"|null}'
+        ),
+    )
+    prompt = f"Today's date: {today.isoformat()}\nQuestion: {question}"
+    result = await Runner.run(agent, prompt)
+    try:
+        parsed = json.loads(_strip_code_fence(result.final_output))
+    except (json.JSONDecodeError, TypeError):
+        return {"resolvable": False, "start": None, "end": None}
+
+    if not isinstance(parsed, dict) or not parsed.get("resolvable"):
+        return {"resolvable": False, "start": None, "end": None}
+
+    return {
+        "resolvable": True,
+        "start": _parse_date(parsed.get("start")),
+        "end": _parse_date(parsed.get("end")),
+    }

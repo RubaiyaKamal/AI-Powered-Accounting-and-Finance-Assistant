@@ -122,3 +122,23 @@ export function listSummaries(): Promise<TaxSummaryListResponse> {
 export function getSummary(id: string): Promise<TaxSummary> {
   return request(`/api/tax/summaries/${id}`);
 }
+
+export interface TaxQueryResponse {
+  data: TaxSummary | null;
+  narrative: string;
+}
+
+export async function queryTaxSummary(question: string): Promise<TaxQueryResponse> {
+  const res = await fetch(`${API_BASE_URL}/api/agent/tax/query`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question }),
+  });
+  // 422 is a legitimate "couldn't confidently resolve this" response with
+  // its own narrative (contracts/tax-api.md) — not a failure to throw.
+  if (res.status !== 200 && res.status !== 422) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new ApiError(body.detail ?? "Request failed", res.status);
+  }
+  return res.json();
+}
