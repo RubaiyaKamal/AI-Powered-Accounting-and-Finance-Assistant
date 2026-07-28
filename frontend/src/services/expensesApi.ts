@@ -14,7 +14,7 @@ export interface ExpenseEntry {
   category: Category;
   category_source: "user" | "ai_suggested";
   description: string | null;
-  source: "manual" | "natural_language";
+  source: "manual" | "natural_language" | "receipt_image";
   created_at: string;
   updated_at: string;
 }
@@ -69,7 +69,7 @@ export interface CreateExpensePayload {
   category_id?: string | null;
   category_name_hint?: string | null;
   description?: string | null;
-  source?: "manual" | "natural_language";
+  source?: "manual" | "natural_language" | "receipt_image";
 }
 
 export function createExpense(
@@ -127,4 +127,23 @@ export function parseExpenseDraft(text: string): Promise<ParseDraftResponse> {
     method: "POST",
     body: JSON.stringify({ text }),
   });
+}
+
+export async function parseReceiptImage(
+  file: File
+): Promise<ParseDraftResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+  // No Content-Type header here — the browser sets multipart/form-data
+  // with the correct boundary automatically; forcing application/json
+  // (like the shared `request` helper does) would break the upload.
+  const res = await fetch(`${API_BASE_URL}/api/agent/expenses/parse-receipt`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new ApiError(body.detail ?? "Request failed", res.status);
+  }
+  return res.json();
 }

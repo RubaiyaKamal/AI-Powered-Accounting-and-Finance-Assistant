@@ -17,7 +17,7 @@ class ExpenseEntryCreate(BaseModel):
         description="Used only when category_id is omitted, to drive AI category suggestion.",
     )
     description: str | None = Field(default=None, max_length=500)
-    source: Literal["manual", "natural_language"] = "manual"
+    source: Literal["manual", "natural_language", "receipt_image"] = "manual"
 
 
 class ExpenseEntryUpdate(BaseModel):
@@ -45,7 +45,7 @@ class ExpenseEntryRead(BaseModel):
     category: CategoryRead
     category_source: Literal["user", "ai_suggested"]
     description: str | None
-    source: Literal["manual", "natural_language"]
+    source: Literal["manual", "natural_language", "receipt_image"]
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
