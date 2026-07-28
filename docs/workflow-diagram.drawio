@@ -26,8 +26,8 @@
         </mxCell>
 
         <!-- Agent tools -->
-        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match, generate_pl, generate_balance_sheet, run_audit, answer_query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="780" y="410" width="280" height="110" as="geometry" />
+        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match,&#10;resolve_report_request (question → report type + date/period),&#10;narrate_report (computed result → prose)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="780" y="410" width="280" height="130" as="geometry" />
         </mxCell>
 
         <!-- Database -->
