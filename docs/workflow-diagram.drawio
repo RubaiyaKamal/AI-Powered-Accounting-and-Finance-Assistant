@@ -71,23 +71,32 @@
         </mxCell>
 
         <!-- Edges: main request/response flow -->
-        <mxCell id="e1" value="1. HTTPS / JSON request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="user" target="frontend">
+        <mxCell id="e1" value="1. HTTPS / JSON request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="user" target="frontend">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e2" value="2. REST API call (form submit OR chat message)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="frontend" target="backend">
+        <!-- e2 and e10 both connect frontend<->backend: separated onto distinct x-fractions so they never sit on the same line -->
+        <mxCell id="e2" value="2. REST API call (form submit OR chat message)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=0.2;exitY=1;entryX=0.2;entryY=0;" edge="1" parent="1" source="frontend" target="backend">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-70" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e10" value="9. Confirm → normal POST/PATCH (same endpoint as manual entry)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;fontColor=#C9A227;strokeColor=#C9A227;dashed=1;exitX=0.8;exitY=1;entryX=0.8;entryY=0;" edge="1" parent="1" source="frontend" target="backend">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="90" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e3" value="3a. Direct CRUD / report query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="backend" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e3" value="3a. Direct CRUD / report query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="db">
+        <mxCell id="e4" value="3b. Natural-language text handed to agent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" parent="1" source="backend" target="agent">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e4" value="3b. Natural-language text handed to agent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="agent">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <mxCell id="e8" value="7. Response (JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="frontend">
+        <mxCell id="e8" value="7. Response (JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=0;exitY=0.25;entryX=0;entryY=0.75;" edge="1" parent="1" source="backend" target="frontend">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="330" y="300" />
@@ -96,7 +105,7 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="e9" value="8. Rendered UI (draft shown for confirmation, if AI-created)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="frontend" target="user">
+        <mxCell id="e9" value="8. Rendered UI (draft shown for confirmation, if AI-created)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=0;exitY=0.25;entryX=0.15;entryY=1;" edge="1" parent="1" source="frontend" target="user">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="330" y="195" />
@@ -105,89 +114,104 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="e10" value="9. Confirm → normal POST/PATCH (same endpoint as manual entry)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;fontColor=#C9A227;strokeColor=#C9A227;dashed=1;" edge="1" parent="1" source="frontend" target="backend">
+        <!-- Edges: agent invokes each themed tool box (fanned out along agent's bottom edge so exit points don't coincide) -->
+        <mxCell id="e5a" value="4a. Agent invokes an entry/report tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=0.15;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent" target="tools_core">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5b" value="4b. Agent invokes a tax tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=0.38;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent" target="tools_tax">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5c" value="4c. Agent invokes an audit tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=0.62;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent" target="tools_audit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5d" value="4d. Agent invokes an analysis tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=0.85;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent" target="tools_analysis">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <!-- Edges: agent invokes each themed tool box, tools read db, tools respond to backend -->
-        <mxCell id="e5a" value="4a. Agent invokes an entry/report tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="agent" target="tools_core">
+        <!-- Each tool box reads db at a distinct point on db's right edge, so the four labels stack vertically instead of piling on one spot -->
+        <mxCell id="e6a" value="5. Read-only query (context for suggestion / report)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.15;" edge="1" parent="1" source="tools_core" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e5b" value="4b. Agent invokes a tax tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="agent" target="tools_tax">
+        <mxCell id="e6b" value="5. Read-only query (context for tax summary)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.4;" edge="1" parent="1" source="tools_tax" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e5c" value="4c. Agent invokes an audit tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="agent" target="tools_audit">
+        <mxCell id="e6c" value="5. Read-only query (context for audit)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.65;" edge="1" parent="1" source="tools_audit" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e5d" value="4d. Agent invokes an analysis tool" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="agent" target="tools_analysis">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <mxCell id="e6a" value="5. Read-only query (context for suggestion / report)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="tools_core" target="db">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6b" value="5. Read-only query (context for tax summary)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="tools_tax" target="db">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6c" value="5. Read-only query (context for audit)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="tools_audit" target="db">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6d" value="5. Read-only query (context for analysis)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="tools_analysis" target="db">
+        <mxCell id="e6d" value="5. Read-only query (context for analysis)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="tools_analysis" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e7a" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="tools_core" target="backend">
+        <!-- Each tool box responds to backend via its own external channel (x=1140) and its own entry point on backend's right edge -->
+        <mxCell id="e7a" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=1;exitY=0.5;entryX=1;entryY=0.1;" edge="1" parent="1" source="tools_core" target="backend">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1140" y="445" />
-              <mxPoint x="1140" y="300" />
+              <mxPoint x="1140" y="268" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e7b" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="tools_tax" target="backend">
+        <mxCell id="e7b" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=1;exitY=0.5;entryX=1;entryY=0.4;" edge="1" parent="1" source="tools_tax" target="backend">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1140" y="615" />
-              <mxPoint x="1140" y="300" />
+              <mxPoint x="1140" y="294" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e7c" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="tools_audit" target="backend">
+        <mxCell id="e7c" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=1;exitY=0.5;entryX=1;entryY=0.7;" edge="1" parent="1" source="tools_audit" target="backend">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1140" y="775" />
-              <mxPoint x="1140" y="300" />
+              <mxPoint x="1140" y="320" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e7d" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;" edge="1" parent="1" source="tools_analysis" target="backend">
+        <mxCell id="e7d" value="6. Draft / suggestion / narrated result back to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;exitX=1;exitY=0.5;entryX=1;entryY=1;" edge="1" parent="1" source="tools_analysis" target="backend">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1140" y="935" />
-              <mxPoint x="1140" y="300" />
+              <mxPoint x="1140" y="345" />
             </Array>
           </mxGeometry>
         </mxCell>
 
-        <!-- Edges: specialized deterministic components -->
-        <mxCell id="e12" value="3c. Trigger audit run" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="detector">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- Edges: specialized deterministic components. backend->detector/retrieval/forecaster are routed around the outside
+             of the left column (via distinct x=725/745/765 channels) so they don't cut straight through db/retrieval/detector,
+             which sit between backend and their real targets in the same column. -->
+        <mxCell id="e12" value="3c. Trigger audit run" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=1;exitY=0.85;entryX=1;entryY=0.5;" edge="1" parent="1" source="backend" target="detector">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="725" y="332" />
+              <mxPoint x="725" y="790" />
+            </Array>
+          </mxGeometry>
         </mxCell>
-        <mxCell id="e11" value="Reads active postings, writes audit_runs/anomaly_flags" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="detector" target="db">
+        <mxCell id="e11" value="Reads active postings, writes audit_runs/anomaly_flags" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0.25;exitY=0;entryX=0.25;entryY=1;" edge="1" parent="1" source="detector" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e14" value="3d. Trigger summary retrieval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="retrieval">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="e14" value="3d. Trigger summary retrieval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=1;exitY=0.55;entryX=1;entryY=0.5;" edge="1" parent="1" source="backend" target="retrieval">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="307" />
+              <mxPoint x="745" y="650" />
+            </Array>
+          </mxGeometry>
         </mxCell>
-        <mxCell id="e13" value="Reads chunk embeddings, writes tax_summaries" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="retrieval" target="db">
+        <mxCell id="e13" value="Reads chunk embeddings, writes tax_summaries" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="retrieval" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e15" value="3e. Trigger spending analysis / forecast" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="forecaster">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="e15" value="3e. Trigger spending analysis / forecast" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;exitX=1;exitY=0.7;entryX=1;entryY=0.5;" edge="1" parent="1" source="backend" target="forecaster">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="765" y="320" />
+              <mxPoint x="765" y="940" />
+            </Array>
+          </mxGeometry>
         </mxCell>
-        <mxCell id="e16" value="Reads active postings (read-only, no new tables)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="forecaster" target="db">
+        <mxCell id="e16" value="Reads active postings (read-only, no new tables)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;exitX=0.75;exitY=0;entryX=0.75;entryY=1;" edge="1" parent="1" source="forecaster" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
