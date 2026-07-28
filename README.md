@@ -34,11 +34,14 @@ docker-compose up --build
 - Backend API docs: http://localhost:8000/docs
 - Postgres: localhost:5432 (user/pass: `postgres`/`postgres`, db: `accounting`)
 
-The backend container needs the database migrated on first run:
+The backend container runs `alembic upgrade head` automatically on startup —
+no manual migration step needed.
 
-```bash
-docker-compose exec backend uv run alembic upgrade head
-```
+**Environment variables** (see `backend/.env.example`): `DATABASE_URL`,
+`OPENAI_API_KEY` (optional), `AGENT_MODEL` (defaults to `gpt-4o-mini`), and
+`ACCOUNT_CODING_CONFIDENCE_THRESHOLD` (defaults to `0.8` — the minimum AI
+confidence score for an account coding to auto-post to the ledger; below it,
+the coding is routed to manual review instead).
 
 ## Running locally without Docker
 
