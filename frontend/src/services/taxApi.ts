@@ -21,6 +21,27 @@ export interface TaxRulesDocumentListResponse {
   total: number;
 }
 
+export interface CitedPassage {
+  document_title: string;
+  chunk_text: string;
+}
+
+export type TaxSummaryStatus = "draft" | "signed_off";
+
+export interface TaxSummary {
+  id: string;
+  start: string;
+  end: string;
+  status: TaxSummaryStatus;
+  total_revenue: string;
+  total_expenses: string;
+  net_profit: string;
+  cited_passages: CitedPassage[];
+  narrative: string;
+  generated_at: string;
+  signed_off_at: string | null;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -60,4 +81,11 @@ export function getDocument(id: string): Promise<TaxRulesDocument> {
 
 export function deleteDocument(id: string): Promise<void> {
   return request(`/api/tax/documents/${id}`, { method: "DELETE" });
+}
+
+export function generateSummary(start?: string, end?: string): Promise<TaxSummary> {
+  return request("/api/tax/summaries", {
+    method: "POST",
+    body: JSON.stringify({ start: start || null, end: end || null }),
+  });
 }

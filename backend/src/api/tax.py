@@ -10,8 +10,10 @@ from src.schemas.tax import (
     TaxRulesDocumentListResponse,
     TaxRulesDocumentResponse,
     TaxRulesDocumentSummary,
+    TaxSummaryResponse,
+    TaxSummaryTriggerRequest,
 )
-from src.services import tax_document_service
+from src.services import tax_document_service, tax_summary_service
 
 router = APIRouter(prefix="/api/tax", tags=["tax"])
 
@@ -71,3 +73,15 @@ async def delete_document(
         await tax_document_service.delete_document(session, document_id)
     except tax_document_service.NotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/summaries", response_model=TaxSummaryResponse, status_code=201)
+async def generate_summary(
+    payload: TaxSummaryTriggerRequest = TaxSummaryTriggerRequest(),
+    session: AsyncSession = Depends(get_session),
+) -> TaxSummaryResponse:
+    try:
+        summary = await tax_summary_service.generate(session, payload.start, payload.end)
+    except tax_summary_service.ValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return TaxSummaryResponse.model_validate(summary)
