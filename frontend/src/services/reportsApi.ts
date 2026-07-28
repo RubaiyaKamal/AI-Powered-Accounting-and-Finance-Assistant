@@ -40,6 +40,14 @@ export interface BalanceSheetResponse {
   is_balanced: boolean;
 }
 
+export interface CashFlowResponse {
+  start: string;
+  end: string;
+  opening_balance: string;
+  closing_balance: string;
+  net_change: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -79,4 +87,11 @@ export function getProfitAndLoss(
 export function getBalanceSheet(asOf?: string): Promise<BalanceSheetResponse> {
   const qs = asOf ? `?as_of=${asOf}` : "";
   return request(`/api/reports/balance-sheet${qs}`);
+}
+
+export function getCashFlow(start?: string, end?: string): Promise<CashFlowResponse> {
+  const qs = new URLSearchParams(
+    Object.entries({ start, end }).filter(([, v]) => v) as [string, string][]
+  ).toString();
+  return request(`/api/reports/cash-flow${qs ? `?${qs}` : ""}`);
 }

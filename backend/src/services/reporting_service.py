@@ -10,9 +10,11 @@ from src.models.journal_entry import JournalEntry
 from src.schemas.reports import (
     AccountBalance,
     BalanceSheetResponse,
+    CashFlowResponse,
     ProfitAndLossResponse,
     TrialBalanceResponse,
 )
+from src.services.ledger_service import OFFSET_ACCOUNT_NAME
 
 DEBIT_NORMAL_TYPES = {"asset", "expense"}
 
@@ -175,4 +177,33 @@ async def balance_sheet(
         equity_lines=equity_lines,
         total_equity=total_equity,
         is_balanced=total_assets == total_liabilities + total_equity,
+    )
+
+
+async def _cash_balance(session: AsyncSession, as_of: datetime.date) -> Decimal:
+    lines = await _account_balances(session, as_of=as_of)
+    # research.md's single-account assumption: OFFSET_ACCOUNT_NAME ("Cash")
+    # is the one designated cash/offset account this system currently has.
+    line = next((line for line in lines if line.account_name == OFFSET_ACCOUNT_NAME), None)
+    return line.balance if line is not None else Decimal("0.00")
+
+
+async def cash_flow(
+    session: AsyncSession,
+    start: datetime.date | None = None,
+    end: datetime.date | None = None,
+) -> CashFlowResponse:
+    if start is None or end is None:
+        start, end = _current_month_range(datetime.date.today())
+    if end < start:
+        raise ValidationError("end must not be before start")
+
+    opening_balance = await _cash_balance(session, start - datetime.timedelta(days=1))
+    closing_balance = await _cash_balance(session, end)
+    return CashFlowResponse(
+        start=start,
+        end=end,
+        opening_balance=opening_balance,
+        closing_balance=closing_balance,
+        net_change=closing_balance - opening_balance,
     )

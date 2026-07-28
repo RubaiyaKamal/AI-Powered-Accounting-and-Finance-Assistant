@@ -86,10 +86,10 @@ description: "Task list for financial reporting feature implementation"
 
 **Independent Test**: Post journal entries affecting the cash account within a chosen period, request a cash flow statement for that period, and confirm the reported net change in cash matches the sum of those entries and reconciles to the cash account's balance change between the period's start and end.
 
-- [ ] T017 [US4] Implement `ReportingService.cash_flow(session, start, end)` (defaults both to the current calendar month when omitted; `opening_balance` from the Cash account's trial-balance-style balance as of `start - 1 day`, `closing_balance` as of `end`, `net_change = closing_balance - opening_balance`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-005 (depends on T003)
-- [ ] T018 [US4] Implement `GET /api/reports/cash-flow` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T017)
-- [ ] T019 [US4] Extend `ReportViewer` with the Cash Flow report type (start/end range inputs, opening/closing/net-change display) in `frontend/src/components/ReportViewer.tsx` (depends on T007)
-- [ ] T020 [US4] Add `getCashFlow(start?, end?)` to `frontend/src/services/reportsApi.ts`
+- [X] T017 [US4] Implement `ReportingService.cash_flow(session, start, end)` (defaults both to the current calendar month when omitted; `opening_balance` from the Cash account's trial-balance-style balance as of `start - 1 day`, `closing_balance` as of `end`, `net_change = closing_balance - opening_balance`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-005 (depends on T003)
+- [X] T018 [US4] Implement `GET /api/reports/cash-flow` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T017)
+- [X] T019 [US4] Extend `ReportViewer` with the Cash Flow report type (start/end range inputs, opening/closing/net-change display) in `frontend/src/components/ReportViewer.tsx` (depends on T007)
+- [X] T020 [US4] Add `getCashFlow(start?, end?)` to `frontend/src/services/reportsApi.ts`
 
 **Checkpoint**: All four user stories are independently functional.
 

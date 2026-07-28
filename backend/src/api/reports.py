@@ -4,7 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db import get_session
-from src.schemas.reports import BalanceSheetResponse, ProfitAndLossResponse, TrialBalanceResponse
+from src.schemas.reports import (
+    BalanceSheetResponse,
+    CashFlowResponse,
+    ProfitAndLossResponse,
+    TrialBalanceResponse,
+)
 from src.services import reporting_service
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
@@ -34,3 +39,15 @@ async def get_balance_sheet(
     as_of: datetime.date | None = None, session: AsyncSession = Depends(get_session)
 ) -> BalanceSheetResponse:
     return await reporting_service.balance_sheet(session, as_of)
+
+
+@router.get("/cash-flow", response_model=CashFlowResponse)
+async def get_cash_flow(
+    start: datetime.date | None = None,
+    end: datetime.date | None = None,
+    session: AsyncSession = Depends(get_session),
+) -> CashFlowResponse:
+    try:
+        return await reporting_service.cash_flow(session, start, end)
+    except reporting_service.ValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc

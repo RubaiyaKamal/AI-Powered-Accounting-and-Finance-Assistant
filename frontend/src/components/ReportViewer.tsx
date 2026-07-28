@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import {
   ApiError,
   BalanceSheetResponse,
+  CashFlowResponse,
   ProfitAndLossResponse,
   TrialBalanceResponse,
   getBalanceSheet,
+  getCashFlow,
   getProfitAndLoss,
   getTrialBalance,
 } from "@/services/reportsApi";
 
-type ReportType = "trial_balance" | "profit_and_loss" | "balance_sheet";
+type ReportType = "trial_balance" | "profit_and_loss" | "balance_sheet" | "cash_flow";
 
 export default function ReportViewer() {
   const [reportType, setReportType] = useState<ReportType>("trial_balance");
@@ -21,6 +23,7 @@ export default function ReportViewer() {
   const [trialBalance, setTrialBalance] = useState<TrialBalanceResponse | null>(null);
   const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossResponse | null>(null);
   const [balanceSheet, setBalanceSheet] = useState<BalanceSheetResponse | null>(null);
+  const [cashFlow, setCashFlow] = useState<CashFlowResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function load() {
@@ -40,6 +43,12 @@ export default function ReportViewer() {
     } else if (reportType === "balance_sheet") {
       getBalanceSheet(asOf || undefined)
         .then(setBalanceSheet)
+        .catch((err) =>
+          setError(err instanceof ApiError ? err.message : "Failed to load report.")
+        );
+    } else if (reportType === "cash_flow") {
+      getCashFlow(start || undefined, end || undefined)
+        .then(setCashFlow)
         .catch((err) =>
           setError(err instanceof ApiError ? err.message : "Failed to load report.")
         );
@@ -63,6 +72,7 @@ export default function ReportViewer() {
             <option value="trial_balance">Trial Balance</option>
             <option value="profit_and_loss">Profit &amp; Loss</option>
             <option value="balance_sheet">Balance Sheet</option>
+            <option value="cash_flow">Cash Flow</option>
           </select>
         </div>
         {(reportType === "trial_balance" || reportType === "balance_sheet") && (
@@ -76,7 +86,7 @@ export default function ReportViewer() {
             />
           </div>
         )}
-        {reportType === "profit_and_loss" && (
+        {(reportType === "profit_and_loss" || reportType === "cash_flow") && (
           <>
             <div className="field">
               <label htmlFor="pl-start">Start</label>
@@ -310,6 +320,35 @@ export default function ReportViewer() {
             </tbody>
           </table>
         </>
+      )}
+
+      {reportType === "cash_flow" && cashFlow && (
+        <table>
+          <tbody>
+            <tr>
+              <td>Period</td>
+              <td>
+                {cashFlow.start} to {cashFlow.end}
+              </td>
+            </tr>
+            <tr>
+              <td>Opening Balance</td>
+              <td>{cashFlow.opening_balance}</td>
+            </tr>
+            <tr>
+              <td>Closing Balance</td>
+              <td>{cashFlow.closing_balance}</td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Net Change in Cash</strong>
+              </td>
+              <td>
+                <strong>{cashFlow.net_change}</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       )}
     </div>
   );
