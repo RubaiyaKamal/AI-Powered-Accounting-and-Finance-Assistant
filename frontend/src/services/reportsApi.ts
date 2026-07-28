@@ -48,6 +48,18 @@ export interface CashFlowResponse {
   net_change: string;
 }
 
+export type ReportType =
+  | "trial_balance"
+  | "profit_and_loss"
+  | "balance_sheet"
+  | "cash_flow";
+
+export interface ReportQueryResponse {
+  report_type: ReportType | null;
+  data: Record<string, unknown> | null;
+  narrative: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -94,4 +106,19 @@ export function getCashFlow(start?: string, end?: string): Promise<CashFlowRespo
     Object.entries({ start, end }).filter(([, v]) => v) as [string, string][]
   ).toString();
   return request(`/api/reports/cash-flow${qs ? `?${qs}` : ""}`);
+}
+
+export async function queryReport(question: string): Promise<ReportQueryResponse> {
+  const res = await fetch(`${API_BASE_URL}/api/agent/reports/query`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question }),
+  });
+  // 422 is a legitimate "couldn't confidently resolve this" response with
+  // its own narrative (contracts/reports-api.md) — not a failure to throw.
+  if (res.status !== 200 && res.status !== 422) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new ApiError(body.detail ?? "Request failed", res.status);
+  }
+  return res.json();
 }

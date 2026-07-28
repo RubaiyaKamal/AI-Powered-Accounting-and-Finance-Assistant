@@ -1,10 +1,13 @@
 import datetime
 import uuid
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel
 
 from src.schemas.account import AccountType
+
+ReportType = Literal["trial_balance", "profit_and_loss", "balance_sheet", "cash_flow"]
 
 
 class AccountBalance(BaseModel):
@@ -52,3 +55,13 @@ class CashFlowResponse(BaseModel):
     opening_balance: Decimal
     closing_balance: Decimal
     net_change: Decimal
+
+
+class ReportQueryRequest(BaseModel):
+    question: str
+
+
+class ReportQueryResponse(BaseModel):
+    report_type: ReportType | None
+    data: dict | None
+    narrative: str
