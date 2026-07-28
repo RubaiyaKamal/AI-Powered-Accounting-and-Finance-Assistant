@@ -106,9 +106,9 @@ description: "Task list for tax and compliance summaries feature implementation"
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T030 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the retrieval step, the `embed_text`/`draft_summary_narrative`/`resolve_summary_request` tools, and the tax-summary flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
-- [ ] T031 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
-- [ ] T032 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
+- [X] T030 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the retrieval step, the `embed_text`/`draft_summary_narrative`/`resolve_summary_request` tools, and the tax-summary flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
+- [X] T031 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
+- [X] T032 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
 
 ---
 
