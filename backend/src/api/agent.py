@@ -5,12 +5,14 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.agent.audit_tools import narrate_audit_run, resolve_audit_request
 from src.agent.expense_tools import parse_expense_draft, parse_receipt_image
 from src.agent.reporting_tools import narrate_report, resolve_report_request
 from src.config import RECEIPT_IMAGE_ALLOWED_CONTENT_TYPES, RECEIPT_IMAGE_MAX_SIZE_BYTES
 from src.db import get_session
+from src.schemas.audit import AuditQueryRequest, AuditQueryResponse, AuditRunResponse
 from src.schemas.reports import ReportQueryRequest, ReportQueryResponse
-from src.services import reporting_service
+from src.services import audit_service, reporting_service
 
 router = APIRouter(prefix="/api/agent", tags=["agent"])
 
@@ -91,3 +93,36 @@ async def query_report(
     data = result.model_dump(mode="json")
     narrative = await narrate_report(report_type, data)
     return ReportQueryResponse(report_type=report_type, data=data, narrative=narrative)
+
+
+@router.post("/audit/query", response_model=AuditQueryResponse)
+async def query_audit(
+    payload: AuditQueryRequest, session: AsyncSession = Depends(get_session)
+) -> AuditQueryResponse | JSONResponse:
+    """Ask for an audit in natural language (US4's chat path).
+
+    Resolves a date range via `resolve_audit_request`, calls the *exact
+    same* deterministic `AuditService.run_audit` a direct request would
+    use, then narrates via `narrate_audit_run` — the AI never decides
+    which entries are anomalous itself (FR-002).
+    """
+    resolution = await resolve_audit_request(payload.question, datetime.date.today())
+    if not resolution["resolvable"]:
+        clarification = AuditQueryResponse(
+            data=None,
+            narrative=(
+                "I couldn't tell what period you'd like audited. Could you say a "
+                "date range, like 'this month' or 'last quarter'?"
+            ),
+        )
+        return JSONResponse(status_code=422, content=clarification.model_dump(mode="json"))
+
+    try:
+        run = await audit_service.run_audit(session, resolution["start"], resolution["end"])
+    except audit_service.ValidationError as exc:
+        clarification = AuditQueryResponse(data=None, narrative=str(exc))
+        return JSONResponse(status_code=422, content=clarification.model_dump(mode="json"))
+
+    data = AuditRunResponse.model_validate(run).model_dump(mode="json")
+    narrative = await narrate_audit_run(data)
+    return AuditQueryResponse(data=data, narrative=narrative)

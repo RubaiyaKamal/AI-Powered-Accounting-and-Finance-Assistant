@@ -62,3 +62,12 @@ class ResolveFlagRequest(BaseModel):
     resolution: Literal["confirmed_issue", "false_positive", "no_action_needed"] = Field(
         description="The admin's recorded outcome for this flag"
     )
+
+
+class AuditQueryRequest(BaseModel):
+    question: str
+
+
+class AuditQueryResponse(BaseModel):
+    data: dict | None
+    narrative: str

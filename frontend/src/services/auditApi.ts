@@ -62,6 +62,11 @@ export interface AuditRunListResponse {
   total: number;
 }
 
+export interface AuditQueryResponse {
+  data: AuditRun | null;
+  narrative: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -106,4 +111,19 @@ export function listAuditRuns(): Promise<AuditRunListResponse> {
 
 export function getAuditRun(id: string): Promise<AuditRun> {
   return request(`/api/audit/runs/${id}`);
+}
+
+export async function queryAudit(question: string): Promise<AuditQueryResponse> {
+  const res = await fetch(`${API_BASE_URL}/api/agent/audit/query`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question }),
+  });
+  // 422 is a legitimate "couldn't confidently resolve this" response with
+  // its own narrative (contracts/audit-api.md) — not a failure to throw.
+  if (res.status !== 200 && res.status !== 422) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new ApiError(body.detail ?? "Request failed", res.status);
+  }
+  return res.json();
 }
