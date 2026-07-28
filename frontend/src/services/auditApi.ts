@@ -84,3 +84,13 @@ export function runAudit(start?: string, end?: string): Promise<AuditRun> {
     body: JSON.stringify({ start: start || null, end: end || null }),
   });
 }
+
+export function resolveFlag(
+  flagId: string,
+  resolution: Exclude<FlagResolution, "unreviewed">
+): Promise<AnomalyFlag> {
+  return request(`/api/audit/flags/${flagId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ resolution }),
+  });
+}

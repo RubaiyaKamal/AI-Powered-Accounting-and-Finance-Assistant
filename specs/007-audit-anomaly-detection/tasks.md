@@ -62,10 +62,10 @@ description: "Task list for audit and anomaly detection feature implementation"
 
 **Independent Test**: Flag an entry via an audit run, record a resolution for it, and confirm that resolution is still shown the next time that flag is viewed.
 
-- [ ] T015 [US2] Implement `AuditService.resolve_flag(session, flag_id, resolution)` (validates `resolution` is one of the allowed values; sets `resolved_at`) in `backend/src/services/audit_service.py`, per FR-006 (depends on T004)
-- [ ] T016 [US2] Implement `PATCH /api/audit/flags/{id}` in `backend/src/api/audit.py`, per `contracts/audit-api.md` (depends on T015)
-- [ ] T017 [US2] Add resolution controls (confirmed issue / false positive / no action needed) to each flagged entry in `frontend/src/components/AuditRunner.tsx`, calling `resolveFlag` (depends on T013)
-- [ ] T018 [US2] Add `resolveFlag(flagId, resolution)` to `frontend/src/services/auditApi.ts`
+- [X] T015 [US2] Implement `AuditService.resolve_flag(session, flag_id, resolution)` (validates `resolution` is one of the allowed values; sets `resolved_at`) in `backend/src/services/audit_service.py`, per FR-006 (depends on T004)
+- [X] T016 [US2] Implement `PATCH /api/audit/flags/{id}` in `backend/src/api/audit.py`, per `contracts/audit-api.md` (depends on T015)
+- [X] T017 [US2] Add resolution controls (confirmed issue / false positive / no action needed) to each flagged entry in `frontend/src/components/AuditRunner.tsx`, calling `resolveFlag` (depends on T013)
+- [X] T018 [US2] Add `resolveFlag(flagId, resolution)` to `frontend/src/services/auditApi.ts`
 
 **Checkpoint**: User Stories 1 AND 2 both work independently.
 

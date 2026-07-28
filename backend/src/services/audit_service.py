@@ -246,3 +246,22 @@ async def run_audit(
         )
     await session.commit()
     return await _get_run(session, run.id)
+
+
+async def resolve_flag(session: AsyncSession, flag_id: uuid.UUID, resolution: str) -> AnomalyFlag:
+    stmt = (
+        select(AnomalyFlag)
+        .where(AnomalyFlag.id == flag_id)
+        .options(
+            selectinload(AnomalyFlag.journal_entry).selectinload(JournalEntry.debit_account),
+            selectinload(AnomalyFlag.journal_entry).selectinload(JournalEntry.credit_account),
+        )
+    )
+    flag = (await session.execute(stmt)).scalar_one_or_none()
+    if flag is None:
+        raise NotFoundError(f"No anomaly flag with id {flag_id}")
+
+    flag.resolution = resolution
+    flag.resolved_at = datetime.datetime.now(datetime.UTC)
+    await session.commit()
+    return flag
