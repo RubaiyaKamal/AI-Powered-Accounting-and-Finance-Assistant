@@ -11,12 +11,13 @@ from src.api.ledger import router as ledger_router
 from src.api.reconciliation import router as reconciliation_router
 from src.api.reports import router as reports_router
 from src.api.tax import router as tax_router
+from src.config import FRONTEND_ORIGINS
 
 app = FastAPI(title="AI-Powered Accounting Assistant API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=FRONTEND_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
