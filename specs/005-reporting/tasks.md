@@ -109,9 +109,9 @@ description: "Task list for financial reporting feature implementation"
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T024 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `resolve_report_request`/`narrate_report` tools and the reporting flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
-- [ ] T025 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
-- [ ] T026 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
+- [X] T024 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `resolve_report_request`/`narrate_report` tools and the reporting flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
+- [X] T025 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
+- [X] T026 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
 
 ---
 
