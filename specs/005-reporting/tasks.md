@@ -19,7 +19,7 @@ description: "Task list for financial reporting feature implementation"
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Create this feature's new file skeleton: `backend/src/schemas/reports.py`, `backend/src/services/reporting_service.py`, `backend/src/agent/reporting_tools.py`, `backend/src/api/reports.py`; `frontend/src/app/reports/`, `frontend/src/components/{ReportViewer.tsx,ReportQuery.tsx}`, `frontend/src/services/reportsApi.ts` — per `plan.md`'s Project Structure (no new dependency to add — `research.md`'s SQL-over-pandas decision)
+- [X] T001 Create this feature's new file skeleton: `backend/src/schemas/reports.py`, `backend/src/services/reporting_service.py`, `backend/src/agent/reporting_tools.py`, `backend/src/api/reports.py`; `frontend/src/app/reports/`, `frontend/src/components/{ReportViewer.tsx,ReportQuery.tsx}`, `frontend/src/services/reportsApi.ts` — per `plan.md`'s Project Structure (no new dependency to add — `research.md`'s SQL-over-pandas decision)
 
 ---
 
