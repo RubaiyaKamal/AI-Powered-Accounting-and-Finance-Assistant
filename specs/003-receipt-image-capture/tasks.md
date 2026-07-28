@@ -19,7 +19,7 @@ description: "Task list for receipt/invoice image capture feature implementation
 
 ## Phase 1: Setup
 
-- [ ] T001 Add `python-multipart` as an explicit dependency in `backend/pyproject.toml` (currently only a transitive dependency of FastAPI — make the file-upload requirement explicit rather than implicit)
+- [x] T001 Add `python-multipart` as an explicit dependency in `backend/pyproject.toml` (currently only a transitive dependency of FastAPI — make the file-upload requirement explicit rather than implicit)
 
 ---
 
@@ -27,8 +27,8 @@ description: "Task list for receipt/invoice image capture feature implementation
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 Widen `ExpenseEntryCreate.source`'s `Literal` type to include `"receipt_image"` in `backend/src/schemas/expense_entry.py`, per `data-model.md`
-- [ ] T003 Add allowed content-types (`image/jpeg`, `image/png`, `image/webp`) and a max upload size constant (5MB) in `backend/src/config.py`, per `research.md`'s Upload Validation decision
+- [x] T002 Widen `ExpenseEntryCreate.source`'s `Literal` type to include `"receipt_image"` in `backend/src/schemas/expense_entry.py`, per `data-model.md`
+- [x] T003 Add allowed content-types (`image/jpeg`, `image/png`, `image/webp`) and a max upload size constant (5MB) in `backend/src/config.py`, per `research.md`'s Upload Validation decision
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -40,10 +40,10 @@ description: "Task list for receipt/invoice image capture feature implementation
 
 **Independent Test**: Upload a clear, legible receipt photo and confirm the system shows a parsed amount, date, and description matching the receipt, then confirm it saves an expense entry with exactly those values.
 
-- [ ] T004 [US1] Implement `parse_receipt_image` (image bytes + content type → the same `{"status": "ready_for_confirmation", "draft": {...}}` / `{"status": "needs_clarification", ...}` shape `parse_expense_draft` already returns, via GPT-4o mini's multimodal input) in `backend/src/agent/expense_tools.py`, per FR-002, FR-004
-- [ ] T005 [US1] Implement `POST /api/agent/expenses/parse-receipt` (multipart upload; validates content-type/size from T003 before calling `parse_receipt_image`, returning `422` on an invalid upload per FR-009) in `backend/src/api/agent.py`, per `contracts/receipt-capture-api.md`
-- [ ] T006 [US1] Add a `parseReceiptImage(file)` client function to `frontend/src/services/expensesApi.ts`, per `contracts/receipt-capture-api.md`
-- [ ] T007 [US1] Add a file-upload control to `AssistantChat.tsx` that calls `parseReceiptImage`, reuses the component's existing draft/confirm/correct rendering, and tags the eventual `createExpense` call with `source="receipt_image"` in `frontend/src/components/AssistantChat.tsx`
+- [x] T004 [US1] Implement `parse_receipt_image` (image bytes + content type → the same `{"status": "ready_for_confirmation", "draft": {...}}` / `{"status": "needs_clarification", ...}` shape `parse_expense_draft` already returns, via GPT-4o mini's multimodal input) in `backend/src/agent/expense_tools.py`, per FR-002, FR-004
+- [x] T005 [US1] Implement `POST /api/agent/expenses/parse-receipt` (multipart upload; validates content-type/size from T003 before calling `parse_receipt_image`, returning `422` on an invalid upload per FR-009) in `backend/src/api/agent.py`, per `contracts/receipt-capture-api.md`
+- [x] T006 [US1] Add a `parseReceiptImage(file)` client function to `frontend/src/services/expensesApi.ts`, per `contracts/receipt-capture-api.md`
+- [x] T007 [US1] Add a file-upload control to `AssistantChat.tsx` that calls `parseReceiptImage`, reuses the component's existing draft/confirm/correct rendering, and tags the eventual `createExpense` call with `source="receipt_image"` in `frontend/src/components/AssistantChat.tsx`
 
 **Checkpoint**: User Story 1 is fully functional and independently testable — this is the whole feature's MVP (and its only story).
 
@@ -53,9 +53,36 @@ description: "Task list for receipt/invoice image capture feature implementation
 
 ## Phase 4: Polish & Cross-Cutting Concerns
 
-- [ ] T008 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `parse_receipt_image` tool and the image-upload flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
-- [ ] T009 Run the `quickstart.md` validation flow end-to-end (all 7 steps, including confirming no image is ever retained per FR-008) and fix any gaps found
-- [ ] T010 [P] Code cleanup pass across the modified `backend/` and `frontend/` files for this feature
+- [x] T008 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `parse_receipt_image` tool and the image-upload flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
+- [x] T009 Run the `quickstart.md` validation flow end-to-end (all 7 steps, including confirming no image is ever retained per FR-008) and fix any gaps found
+- [x] T010 [P] Code cleanup pass across the modified `backend/` and `frontend/` files for this feature
+
+### T009 findings (quickstart validation)
+
+Ran the full flow live against `docker-compose up`, using a synthetic
+receipt image (generated with Pillow: vendor name, date, line items, and a
+total) since no physical receipt was available. All 7 steps passed on the
+**first attempt** — no bugs found, a first for this project's features so
+far, most likely a direct result of the plan's deliberate choice to reuse
+already-debugged code paths (`parse_expense_draft`'s exact response shape,
+the existing `POST /api/expenses` commit path, `AssistantChat`'s existing
+draft/confirm UI) rather than building anything new end-to-end:
+
+1. Clear receipt upload → correctly parsed amount ($39.50, matching the
+   receipt's TOTAL line), date, and vendor as `category_name_hint`.
+2. Confirmed draft → entry saved with `source=receipt_image` and correctly
+   received an AI-suggested "Supplies" category (FR-005–FR-007 verified in
+   one request).
+3. Unsupported file type (a `.docx`) → `422` rejected before extraction.
+4. Oversized image (6MB) → `422` rejected before extraction.
+5. Blank/unreadable image → `needs_clarification` with a specific
+   follow-up question for the amount (FR-004), not a guess or silent
+   failure.
+6. Confirmed via filesystem inspection inside the running container that
+   no receipt/upload files exist anywhere (FR-008) — the image truly never
+   leaves memory.
+7. Frontend confirmed rendering the new "Upload a receipt/invoice photo"
+   control on `/expenses` with no compile errors.
 
 ---
 

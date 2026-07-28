@@ -7,7 +7,7 @@ existing `ExpenseEntry` entity from `001-expense-entry`'s data model.
 
 | Field | Change |
 |---|---|
-| `source` | `Literal["manual", "natural_language"]` → `Literal["manual", "natural_language", "receipt_image"]`. No column type change — `source` is already a plain string column (`String(20)`), so this is a Pydantic/API-layer widening only, not a migration. |
+| `source` | `Literal["manual", "natural_language"]` → `Literal["manual", "natural_language", "receipt_image"]`, on **both** `ExpenseEntryCreate` and `ExpenseEntryRead` (the response schema needs the same widening, or reads of a receipt-created entry would fail validation). No column type change — `source` is already a plain string column (`String(20)`), so this is a Pydantic/API-layer widening only, not a migration. |
 
 All other `ExpenseEntry` fields, validation rules, and relationships are
 unchanged from `001-expense-entry`'s data-model.md.
