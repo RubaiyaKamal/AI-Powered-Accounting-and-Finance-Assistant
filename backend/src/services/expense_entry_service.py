@@ -164,6 +164,7 @@ async def update_entry(
         setattr(entry, field, new_value)
 
     await session.commit()
+    await session.refresh(entry)
     await session.refresh(entry, attribute_names=["category", "edit_history"])
     return entry
 
