@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.accounts import router as accounts_router
 from src.api.agent import router as agent_router
+from src.api.analysis import router as analysis_router
 from src.api.audit import router as audit_router
 from src.api.categories import router as categories_router
 from src.api.expenses import router as expenses_router
@@ -29,6 +30,7 @@ app.include_router(reconciliation_router)
 app.include_router(reports_router)
 app.include_router(audit_router)
 app.include_router(tax_router)
+app.include_router(analysis_router)
 
 
 @app.get("/health")
