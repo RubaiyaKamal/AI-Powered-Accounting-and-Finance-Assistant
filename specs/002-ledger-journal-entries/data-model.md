@@ -27,7 +27,7 @@ rows (as either the debited or credited account).
 | Field | Type | Constraints | Notes |
 |---|---|---|---|
 | `id` | UUID (PK) | not null, default random | |
-| `expense_entry_id` | FK → ExpenseEntry.id, unique | not null, `ON DELETE CASCADE` | one active coding per expense entry (US1) |
+| `expense_entry_id` | UUID, unique | not null, **not a DB-enforced FK** | one active coding per expense entry (US1); intentionally not FK-constrained — see Validation rules below |
 | `account_id` | FK → Account.id | not null | the coded Expense-type account |
 | `confidence_score` | numeric(3,2) | nullable | `0.00`–`1.00`; null when `source=user` (no AI suggestion involved) |
 | `source` | enum(`ai_suggested`, `user`) | not null | mirrors `ExpenseEntry.category_source` (FR-013) |
@@ -42,6 +42,15 @@ rows (as either the debited or credited account).
 - A `pending_review` coding cannot have an associated `posted` `JournalEntry`
   (enforced by `ledger_service`, not a DB constraint — see State
   transitions below).
+- `expense_entry_id` is deliberately **not** a DB-enforced foreign key
+  (caught and corrected during implementation): FR-012 requires that
+  deleting an expense entry with posted history reverses the journal entry
+  rather than being blocked or silently destroying that history. A
+  RESTRICT-style FK would block the delete; a CASCADE FK would destroy the
+  coding/journal audit trail FR-012 explicitly requires to survive. The
+  `expense_entry_id` value is validated to reference a real, existing
+  `ExpenseEntry` only at creation time (`suggest_coding`), the one point
+  where it must be live.
 
 **Relationships**: belongs to exactly one `ExpenseEntry`; belongs to one
 `Account`; has zero or more `JournalEntry` rows over its lifetime (one
@@ -63,8 +72,8 @@ rows (as either the debited or credited account).
 | Field | Type | Constraints | Notes |
 |---|---|---|---|
 | `id` | UUID (PK) | not null, default random | |
-| `expense_entry_id` | FK → ExpenseEntry.id | not null | source entry (FR-010) |
-| `account_coding_id` | FK → AccountCoding.id | not null | the coding this posting was generated from |
+| `expense_entry_id` | UUID | not null, **not a DB-enforced FK** | source entry (FR-010); same audit-survival reasoning as `AccountCoding.expense_entry_id` above |
+| `account_coding_id` | FK → AccountCoding.id | not null | the coding this posting was generated from — safe to enforce, since `AccountCoding` rows are never deleted by this feature |
 | `debit_account_id` | FK → Account.id | not null | the coded Expense account (US2 scenario 1) |
 | `credit_account_id` | FK → Account.id | not null | the fixed offset account (`research.md`) |
 | `amount` | numeric(12,2) | not null, `> 0` | always copied from `ExpenseEntry.amount`, never AI-generated (FR-007) |
