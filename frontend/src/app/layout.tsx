@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Logo from "@/components/Logo";
+import Sidebar from "@/components/Sidebar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,19 +20,12 @@ export default function RootLayout({
           <h1>
             AI-Powered <span className="accent">Accounting</span> Assistant
           </h1>
-          <nav style={{ marginTop: "0.5rem" }}>
-            <Link href="/expenses" style={{ color: "inherit", marginRight: "1rem" }}>
-              Expenses
-            </Link>
-            <Link href="/ledger" style={{ color: "inherit", marginRight: "1rem" }}>
-              Ledger
-            </Link>
-            <Link href="/reconciliation" style={{ color: "inherit" }}>
-              Reconciliation
-            </Link>
-          </nav>
+          <Logo />
         </header>
-        {children}
+        <div className="app-shell">
+          <Sidebar />
+          <main>{children}</main>
+        </div>
       </body>
     </html>
   );

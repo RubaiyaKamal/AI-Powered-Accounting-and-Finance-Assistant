@@ -30,6 +30,9 @@ header.app-header {
   background: var(--color-primary);
   color: var(--color-text-inverse);
   padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 header.app-header h1 {
@@ -43,10 +46,55 @@ header.app-header .accent {
   color: var(--color-accent);
 }
 
-main {
-  max-width: 840px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+.app-logo {
+  display: flex;
+  align-items: center;
+  color: var(--color-accent);
+}
+
+.app-shell {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - 60px);
+}
+
+.app-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: var(--color-secondary);
+  padding: 1.5rem 0.75rem;
+}
+
+.app-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.app-sidebar a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: var(--color-text-inverse);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.app-sidebar a:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.app-sidebar a.active {
+  background: var(--color-accent);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.app-shell main {
+  flex: 1;
+  max-width: none;
+  margin: 0;
+  padding: 2rem 1.5rem;
 }
 
 .panel {
