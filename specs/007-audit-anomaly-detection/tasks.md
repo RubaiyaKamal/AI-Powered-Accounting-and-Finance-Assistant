@@ -102,9 +102,9 @@ description: "Task list for audit and anomaly detection feature implementation"
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T026 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `audit_service` detector, the `resolve_audit_request`/`narrate_audit_run`/`explain_flags` tools, and the audit flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
-- [ ] T027 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
-- [ ] T028 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
+- [X] T026 [P] Update the workflow diagram (`docs/workflow-diagram.drawio`) to include the `audit_service` detector, the `resolve_audit_request`/`narrate_audit_run`/`explain_flags` tools, and the audit flow — required before this feature's PR merges, per the Constitution Check in `plan.md` (Principle V)
+- [X] T027 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
+- [X] T028 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
 
 ---
 

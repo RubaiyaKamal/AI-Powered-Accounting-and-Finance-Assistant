@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import AuditHistory from "@/components/AuditHistory";
-import { AuditRunResults } from "@/components/AuditRunner";
-import AuditRunner from "@/components/AuditRunner";
-import { ApiError, AuditQueryResponse, AnomalyFlag, queryAudit } from "@/services/auditApi";
+import AuditRunner, { AuditRunResults } from "@/components/AuditRunner";
+import { AnomalyFlag, ApiError, AuditQueryResponse, queryAudit } from "@/services/auditApi";
 
 function AuditQuery() {
   const [question, setQuestion] = useState("");
