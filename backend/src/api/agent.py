@@ -5,16 +5,24 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.agent.analysis_tools import narrate_spending_result, resolve_spending_request
 from src.agent.audit_tools import narrate_audit_run, resolve_audit_request
 from src.agent.expense_tools import parse_expense_draft, parse_receipt_image
 from src.agent.reporting_tools import narrate_report, resolve_report_request
 from src.agent.tax_tools import resolve_summary_request
 from src.config import RECEIPT_IMAGE_ALLOWED_CONTENT_TYPES, RECEIPT_IMAGE_MAX_SIZE_BYTES
 from src.db import get_session
+from src.schemas.analysis import SpendingQueryRequest, SpendingQueryResponse
 from src.schemas.audit import AuditQueryRequest, AuditQueryResponse, AuditRunResponse
 from src.schemas.reports import ReportQueryRequest, ReportQueryResponse
 from src.schemas.tax import TaxQueryRequest, TaxQueryResponse, TaxSummaryResponse
-from src.services import audit_service, reporting_service, tax_summary_service
+from src.services import (
+    account_service,
+    analysis_service,
+    audit_service,
+    reporting_service,
+    tax_summary_service,
+)
 
 router = APIRouter(prefix="/api/agent", tags=["agent"])
 
@@ -163,3 +171,82 @@ async def query_tax_summary(
 
     data = TaxSummaryResponse.model_validate(summary).model_dump(mode="json")
     return TaxQueryResponse(data=data, narrative=summary.narrative)
+
+
+def _analysis_clarification(narrative: str) -> JSONResponse:
+    clarification = SpendingQueryResponse(request_kind=None, data=None, narrative=narrative)
+    return JSONResponse(status_code=422, content=clarification.model_dump(mode="json"))
+
+
+@router.post("/analysis/query", response_model=SpendingQueryResponse)
+async def query_analysis(
+    payload: SpendingQueryRequest, session: AsyncSession = Depends(get_session)
+) -> SpendingQueryResponse | JSONResponse:
+    """Ask a spending question in natural language.
+
+    This is the *sole* delivery mechanism for the single-amount request
+    kind (US1 — spec.md describes it only via natural language, with no
+    direct REST equivalent) and the chat path for the rest (US4). Resolves
+    the question via `resolve_spending_request` (bounded to the real
+    expense account list), calls the *exact same* deterministic
+    `AnalysisService` function the matching direct endpoint (where one
+    exists) uses, then narrates via `narrate_spending_result` — the AI
+    never computes or states a figure itself (FR-002).
+    """
+    accounts = await account_service.list_accounts(session)
+    account_names = [account.name for account in accounts if account.type == "expense"]
+
+    resolution = await resolve_spending_request(
+        payload.question, datetime.date.today(), account_names
+    )
+    request_kind = resolution["request_kind"]
+
+    if request_kind is None:
+        return _analysis_clarification(
+            "I couldn't tell what kind of spending question that is. Could you ask "
+            "for a specific account's total, a spending breakdown, a comparison "
+            "between two periods, or a forecast?"
+        )
+
+    try:
+        if request_kind == "amount":
+            if resolution["account_name"] is None:
+                return _analysis_clarification(
+                    "I couldn't find an account matching what you asked about in "
+                    "your chart of accounts."
+                )
+            result = await analysis_service.spending_amount(
+                session, resolution["account_name"], resolution["start"], resolution["end"]
+            )
+        elif request_kind == "breakdown":
+            result = await analysis_service.breakdown(
+                session, resolution["start"], resolution["end"]
+            )
+        elif request_kind == "comparison":
+            periods = (
+                resolution["period_a_start"],
+                resolution["period_a_end"],
+                resolution["period_b_start"],
+                resolution["period_b_end"],
+            )
+            if not all(periods):
+                return _analysis_clarification(
+                    "I couldn't tell which two periods you'd like to compare. Could "
+                    "you name both periods?"
+                )
+            result = await analysis_service.comparison(session, *periods)
+        else:  # forecast
+            if not resolution["target_start"] or not resolution["target_end"]:
+                return _analysis_clarification(
+                    "I couldn't tell which future period you'd like a forecast for. "
+                    "Could you name it, like 'next month'?"
+                )
+            result = await analysis_service.forecast(
+                session, resolution["target_start"], resolution["target_end"]
+            )
+    except (analysis_service.ValidationError, analysis_service.NotFoundError) as exc:
+        return _analysis_clarification(str(exc))
+
+    data = result.model_dump(mode="json")
+    narrative = await narrate_spending_result(request_kind, data)
+    return SpendingQueryResponse(request_kind=request_kind, data=data, narrative=narrative)

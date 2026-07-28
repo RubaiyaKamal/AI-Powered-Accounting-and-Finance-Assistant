@@ -11,7 +11,7 @@
         </mxCell>
 
         <!-- Frontend -->
-        <mxCell id="frontend" value="Next.js Frontend (TypeScript)&#10;Expenses / Income / Ledgers / Reports / Audit / Tax / AI Chat UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1C1C1E;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+        <mxCell id="frontend" value="Next.js Frontend (TypeScript)&#10;Expenses / Income / Ledgers / Reports / Audit / Tax / Analysis / AI Chat UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1C1C1E;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
           <mxGeometry x="390" y="150" width="320" height="70" as="geometry" />
         </mxCell>
 
@@ -26,8 +26,8 @@
         </mxCell>
 
         <!-- Agent tools -->
-        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match,&#10;resolve_report_request (question → report type + date/period),&#10;narrate_report (computed result → prose),&#10;resolve_audit_request (question → date range),&#10;narrate_audit_run (run result → prose),&#10;explain_flags (flagged entries → prose, batched per run),&#10;resolve_summary_request (question → date range),&#10;draft_summary_narrative (figures + cited passages → prose)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="780" y="410" width="280" height="230" as="geometry" />
+        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match,&#10;resolve_report_request (question → report type + date/period),&#10;narrate_report (computed result → prose),&#10;resolve_audit_request (question → date range),&#10;narrate_audit_run (run result → prose),&#10;explain_flags (flagged entries → prose, batched per run),&#10;resolve_summary_request (question → date range),&#10;draft_summary_narrative (figures + cited passages → prose),&#10;resolve_spending_request (question → request kind + account/period),&#10;narrate_spending_result (computed amount/breakdown/comparison/forecast → prose)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="780" y="410" width="280" height="260" as="geometry" />
         </mxCell>
 
         <!-- Anomaly detector -->
@@ -43,6 +43,11 @@
         <!-- Database -->
         <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history, accounts,&#10;account_codings, journal_entries, bank_transactions, matches,&#10;audit_runs, anomaly_flags, tax_rules_documents,&#10;tax_rules_document_chunks, tax_summaries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
           <mxGeometry x="390" y="440" width="320" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Spending analyzer / forecaster -->
+        <mxCell id="forecaster" value="Spending Analyzer (analysis_service.py)&#10;breakdown/comparison via reporting_service.profit_and_loss;&#10;forecast via LinearRegression (scikit-learn) over past months' totals&#10;— deterministic, never the LLM (Constitution Principle II); no new tables" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="750" width="320" height="80" as="geometry" />
         </mxCell>
 
         <!-- Principle II/III note -->
@@ -63,6 +68,14 @@
         </mxCell>
 
         <mxCell id="e14" value="3d. Trigger summary retrieval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="retrieval">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e15" value="3e. Trigger spending analysis / forecast" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;strokeColor=#1C1C1E;" edge="1" parent="1" source="backend" target="forecaster">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e16" value="Reads active postings (read-only, no new tables)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;strokeColor=#1C1C1E;dashed=1;" edge="1" parent="1" source="forecaster" target="db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
