@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,6 +19,14 @@ export default function RootLayout({
           <h1>
             AI-Powered <span className="accent">Accounting</span> Assistant
           </h1>
+          <nav style={{ marginTop: "0.5rem" }}>
+            <Link href="/expenses" style={{ color: "inherit", marginRight: "1rem" }}>
+              Expenses
+            </Link>
+            <Link href="/ledger" style={{ color: "inherit" }}>
+              Ledger
+            </Link>
+          </nav>
         </header>
         {children}
       </body>

@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.api.accounts import router as accounts_router
 from src.api.agent import router as agent_router
 from src.api.categories import router as categories_router
 from src.api.expenses import router as expenses_router
+from src.api.ledger import router as ledger_router
 
 app = FastAPI(title="AI-Powered Accounting Assistant API")
 
@@ -17,6 +19,8 @@ app.add_middleware(
 app.include_router(expenses_router)
 app.include_router(categories_router)
 app.include_router(agent_router)
+app.include_router(accounts_router)
+app.include_router(ledger_router)
 
 
 @app.get("/health")
