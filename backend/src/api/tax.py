@@ -10,7 +10,9 @@ from src.schemas.tax import (
     TaxRulesDocumentListResponse,
     TaxRulesDocumentResponse,
     TaxRulesDocumentSummary,
+    TaxSummaryListResponse,
     TaxSummaryResponse,
+    TaxSummarySummary,
     TaxSummaryTriggerRequest,
 )
 from src.services import tax_document_service, tax_summary_service
@@ -85,3 +87,50 @@ async def generate_summary(
     except tax_summary_service.ValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return TaxSummaryResponse.model_validate(summary)
+
+
+@router.get("/summaries", response_model=TaxSummaryListResponse)
+async def list_summaries(
+    session: AsyncSession = Depends(get_session),
+) -> TaxSummaryListResponse:
+    summaries = await tax_summary_service.list_summaries(session)
+    items = [TaxSummarySummary.model_validate(s) for s in summaries]
+    return TaxSummaryListResponse(items=items, total=len(items))
+
+
+@router.get("/summaries/{summary_id}", response_model=TaxSummaryResponse)
+async def get_summary(
+    summary_id: uuid.UUID, session: AsyncSession = Depends(get_session)
+) -> TaxSummaryResponse:
+    try:
+        summary = await tax_summary_service.get_summary(session, summary_id)
+    except tax_summary_service.NotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return TaxSummaryResponse.model_validate(summary)
+
+
+@router.post("/summaries/{summary_id}/sign-off", response_model=TaxSummaryResponse)
+async def sign_off_summary(
+    summary_id: uuid.UUID, session: AsyncSession = Depends(get_session)
+) -> TaxSummaryResponse:
+    try:
+        summary = await tax_summary_service.sign_off(session, summary_id)
+    except tax_summary_service.NotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except tax_summary_service.ConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except tax_summary_service.ValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return TaxSummaryResponse.model_validate(summary)
+
+
+@router.delete("/summaries/{summary_id}", status_code=204)
+async def discard_summary(
+    summary_id: uuid.UUID, session: AsyncSession = Depends(get_session)
+) -> None:
+    try:
+        await tax_summary_service.discard(session, summary_id)
+    except tax_summary_service.NotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except tax_summary_service.ConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc

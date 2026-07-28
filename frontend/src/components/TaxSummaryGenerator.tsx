@@ -1,9 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import { ApiError, TaxSummary, generateSummary } from "@/services/taxApi";
+import {
+  ApiError,
+  TaxSummary,
+  discardSummary,
+  generateSummary,
+  signOffSummary,
+} from "@/services/taxApi";
 
-export function TaxSummaryResult({ summary }: { summary: TaxSummary }) {
+export function TaxSummaryResult({
+  summary,
+  onChange,
+}: {
+  summary: TaxSummary;
+  onChange?: (updated: TaxSummary | null) => void;
+}) {
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function handleSignOff() {
+    setError(null);
+    setBusy(true);
+    try {
+      const updated = await signOffSummary(summary.id);
+      onChange?.(updated);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to sign off.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDiscard() {
+    setError(null);
+    setBusy(true);
+    try {
+      await discardSummary(summary.id);
+      onChange?.(null);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to discard the draft.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div style={{ marginTop: "1rem" }}>
       <p>
@@ -49,6 +90,19 @@ export function TaxSummaryResult({ summary }: { summary: TaxSummary }) {
 
       <h3 style={{ marginTop: "1rem" }}>Narrative</h3>
       <p style={{ whiteSpace: "pre-wrap" }}>{summary.narrative}</p>
+
+      {error && <p className="error">{error}</p>}
+
+      {summary.status === "draft" && (
+        <div style={{ marginTop: "1rem" }}>
+          <button className="btn-primary" onClick={handleSignOff} disabled={busy}>
+            Sign Off
+          </button>{" "}
+          <button className="btn-secondary" onClick={handleDiscard} disabled={busy}>
+            Discard
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -98,7 +152,7 @@ export default function TaxSummaryGenerator() {
 
       {error && <p className="error">{error}</p>}
 
-      {summary && <TaxSummaryResult summary={summary} />}
+      {summary && <TaxSummaryResult summary={summary} onChange={setSummary} />}
     </div>
   );
 }

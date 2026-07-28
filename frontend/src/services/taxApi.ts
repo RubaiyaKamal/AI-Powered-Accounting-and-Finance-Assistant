@@ -42,6 +42,23 @@ export interface TaxSummary {
   signed_off_at: string | null;
 }
 
+export interface TaxSummarySummary {
+  id: string;
+  start: string;
+  end: string;
+  status: TaxSummaryStatus;
+  total_revenue: string;
+  total_expenses: string;
+  net_profit: string;
+  generated_at: string;
+  signed_off_at: string | null;
+}
+
+export interface TaxSummaryListResponse {
+  items: TaxSummarySummary[];
+  total: number;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -88,4 +105,20 @@ export function generateSummary(start?: string, end?: string): Promise<TaxSummar
     method: "POST",
     body: JSON.stringify({ start: start || null, end: end || null }),
   });
+}
+
+export function signOffSummary(id: string): Promise<TaxSummary> {
+  return request(`/api/tax/summaries/${id}/sign-off`, { method: "POST" });
+}
+
+export function discardSummary(id: string): Promise<void> {
+  return request(`/api/tax/summaries/${id}`, { method: "DELETE" });
+}
+
+export function listSummaries(): Promise<TaxSummaryListResponse> {
+  return request("/api/tax/summaries");
+}
+
+export function getSummary(id: string): Promise<TaxSummary> {
+  return request(`/api/tax/summaries/${id}`);
 }

@@ -1,5 +1,6 @@
 import datetime
 import re
+import uuid
 
 import numpy as np
 from sqlalchemy import select
@@ -26,6 +27,10 @@ class ValidationError(Exception):
 
 
 class NotFoundError(Exception):
+    pass
+
+
+class ConflictError(Exception):
     pass
 
 
@@ -117,3 +122,48 @@ async def generate(
     await session.commit()
     await session.refresh(summary)
     return summary
+
+
+async def get_summary(session: AsyncSession, summary_id: uuid.UUID) -> TaxSummary:
+    summary = await session.get(TaxSummary, summary_id)
+    if summary is None:
+        raise NotFoundError(f"No tax summary with id {summary_id}")
+    return summary
+
+
+async def list_summaries(session: AsyncSession) -> list[TaxSummary]:
+    stmt = select(TaxSummary).order_by(TaxSummary.generated_at.desc())
+    return list((await session.execute(stmt)).scalars().all())
+
+
+async def sign_off(session: AsyncSession, summary_id: uuid.UUID) -> TaxSummary:
+    summary = await get_summary(session, summary_id)
+    if summary.status == "signed_off":
+        raise ConflictError("This summary is already signed off")
+
+    # Staleness check (FR-009, research.md): recompute the period's actual
+    # figures and refuse sign-off if they've drifted from what this draft
+    # was generated with — the draft must be regenerated against current
+    # data first, not signed off as if it still reflected reality.
+    current = await reporting_service.profit_and_loss(session, summary.start, summary.end)
+    if (
+        current.total_revenue != summary.total_revenue
+        or current.total_expenses != summary.total_expenses
+    ):
+        raise ValidationError(
+            "This draft's figures are out of date — regenerate the summary before "
+            "signing off"
+        )
+
+    summary.status = "signed_off"
+    summary.signed_off_at = datetime.datetime.now(datetime.UTC)
+    await session.commit()
+    return summary
+
+
+async def discard(session: AsyncSession, summary_id: uuid.UUID) -> None:
+    summary = await get_summary(session, summary_id)
+    if summary.status == "signed_off":
+        raise ConflictError("A signed-off summary cannot be discarded")
+    await session.delete(summary)
+    await session.commit()

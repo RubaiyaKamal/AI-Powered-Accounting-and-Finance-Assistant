@@ -78,13 +78,13 @@ description: "Task list for tax and compliance summaries feature implementation"
 
 **Independent Test**: Generate a draft, sign off on it, and confirm it's retained with a recorded sign-off time; separately, generate another draft, discard it, and confirm it's no longer pending.
 
-- [ ] T020 [US3] Implement `TaxSummaryService.sign_off(session, summary_id)` — recomputes `reporting_service.profit_and_loss` for the draft's period and compares it to the stored figures; raises a staleness error on mismatch; otherwise sets `status=signed_off` and `signed_off_at` — in `backend/src/services/tax_summary_service.py`, per FR-007, FR-009, `data-model.md`'s validation rules (depends on T016)
-- [ ] T021 [US3] Implement `TaxSummaryService.discard(session, summary_id)` (deletes the row; raises a conflict error if the summary is already signed off) in `backend/src/services/tax_summary_service.py`, per FR-010
-- [ ] T022 [US3] Implement `TaxSummaryService.list_summaries(session)` and `get_summary(session, summary_id)` in `backend/src/services/tax_summary_service.py`, per FR-010
-- [ ] T023 [US3] Implement `POST /api/tax/summaries/{id}/sign-off`, `DELETE /api/tax/summaries/{id}`, `GET /api/tax/summaries`, `GET /api/tax/summaries/{id}` in `backend/src/api/tax.py`, per `contracts/tax-api.md` (depends on T020, T021, T022)
-- [ ] T024 [US3] Add sign-off and discard controls to the rendered draft in `frontend/src/components/TaxSummaryGenerator.tsx`, calling the respective API functions (depends on T018)
-- [ ] T025 [US3] Build the `TaxSummaryHistory` component (past summaries list with status; reopens any summary — draft or signed-off — to view its full detail, reusing `TaxSummaryGenerator`'s rendering) in `frontend/src/components/TaxSummaryHistory.tsx`
-- [ ] T026 [US3] Add `signOffSummary`/`discardSummary`/`listSummaries`/`getSummary` to `frontend/src/services/taxApi.ts`, and wire `TaxSummaryHistory` into `frontend/src/app/tax/page.tsx` alongside `TaxSummaryGenerator`
+- [X] T020 [US3] Implement `TaxSummaryService.sign_off(session, summary_id)` — recomputes `reporting_service.profit_and_loss` for the draft's period and compares it to the stored figures; raises a staleness error on mismatch; otherwise sets `status=signed_off` and `signed_off_at` — in `backend/src/services/tax_summary_service.py`, per FR-007, FR-009, `data-model.md`'s validation rules (depends on T016)
+- [X] T021 [US3] Implement `TaxSummaryService.discard(session, summary_id)` (deletes the row; raises a conflict error if the summary is already signed off) in `backend/src/services/tax_summary_service.py`, per FR-010
+- [X] T022 [US3] Implement `TaxSummaryService.list_summaries(session)` and `get_summary(session, summary_id)` in `backend/src/services/tax_summary_service.py`, per FR-010
+- [X] T023 [US3] Implement `POST /api/tax/summaries/{id}/sign-off`, `DELETE /api/tax/summaries/{id}`, `GET /api/tax/summaries`, `GET /api/tax/summaries/{id}` in `backend/src/api/tax.py`, per `contracts/tax-api.md` (depends on T020, T021, T022)
+- [X] T024 [US3] Add sign-off and discard controls to the rendered draft in `frontend/src/components/TaxSummaryGenerator.tsx`, calling the respective API functions (depends on T018)
+- [X] T025 [US3] Build the `TaxSummaryHistory` component (past summaries list with status; reopens any summary — draft or signed-off — to view its full detail, reusing `TaxSummaryGenerator`'s rendering) in `frontend/src/components/TaxSummaryHistory.tsx`
+- [X] T026 [US3] Add `signOffSummary`/`discardSummary`/`listSummaries`/`getSummary` to `frontend/src/services/taxApi.ts`, and wire `TaxSummaryHistory` into `frontend/src/app/tax/page.tsx` alongside `TaxSummaryGenerator`
 
 **Checkpoint**: User Stories 1, 2, AND 3 all work independently.
 
