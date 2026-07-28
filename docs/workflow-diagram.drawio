@@ -26,12 +26,12 @@
         </mxCell>
 
         <!-- Agent tools -->
-        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, generate_pl, generate_balance_sheet, run_audit, answer_query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="780" y="410" width="280" height="100" as="geometry" />
+        <mxCell id="tools" value="Agent Tools&#10;parse_expense_draft, parse_receipt_image (image input), suggest_category,&#10;suggest_account_coding, adjudicate_match, generate_pl, generate_balance_sheet, run_audit, answer_query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9A227;fontColor=#1C1C1E;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="780" y="410" width="280" height="110" as="geometry" />
         </mxCell>
 
         <!-- Database -->
-        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history,&#10;accounts, account_codings, journal_entries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history, accounts,&#10;account_codings, journal_entries, bank_transactions, matches" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
           <mxGeometry x="390" y="440" width="320" height="80" as="geometry" />
         </mxCell>
 
