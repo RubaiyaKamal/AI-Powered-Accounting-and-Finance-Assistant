@@ -27,8 +27,8 @@ description: "Task list for financial reporting feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 [P] Create the shared `AccountBalance` schema and the four per-report response schemas (`TrialBalanceResponse`, `ProfitAndLossResponse`, `BalanceSheetResponse`, `CashFlowResponse`) in `backend/src/schemas/reports.py`, per `data-model.md`
-- [ ] T003 Implement `ReportingService._account_balances(session, as_of=None, start=None, end=None)` — the shared per-account debit/credit aggregation query, filtered to `status = 'posted' AND reverses_journal_entry_id IS NULL` (the active-postings-only rule) and, when given, to a date window — in `backend/src/services/reporting_service.py`, per `research.md`'s "which entries count" and "SQL aggregation, not pandas" decisions (depends on T002)
+- [X] T002 [P] Create the shared `AccountBalance` schema and the four per-report response schemas (`TrialBalanceResponse`, `ProfitAndLossResponse`, `BalanceSheetResponse`, `CashFlowResponse`) in `backend/src/schemas/reports.py`, per `data-model.md`
+- [X] T003 Implement `ReportingService._account_balances(session, as_of=None, start=None, end=None)` — the shared per-account debit/credit aggregation query, filtered to `status = 'posted' AND reverses_journal_entry_id IS NULL` (the active-postings-only rule) and, when given, to a date window — in `backend/src/services/reporting_service.py`, per `research.md`'s "which entries count" and "SQL aggregation, not pandas" decisions (depends on T002)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 

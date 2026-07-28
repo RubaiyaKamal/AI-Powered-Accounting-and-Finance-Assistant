@@ -1,0 +1,99 @@
+import datetime
+from decimal import Decimal
+
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.models.account import Account
+from src.models.journal_entry import JournalEntry
+from src.schemas.reports import AccountBalance
+
+DEBIT_NORMAL_TYPES = {"asset", "expense"}
+
+
+class ValidationError(Exception):
+    pass
+
+
+def _active_posting_filters(date_column, as_of, start, end):
+    # The same "currently active, non-reversal, non-reversed posting"
+    # definition ledger_service.active_journal_entry() uses for a single
+    # coding, applied globally across all codings for aggregation
+    # (research.md) — this is what makes a reversed entry and its reversal
+    # cancel out to zero instead of double-counting the correction.
+    filters = [
+        JournalEntry.status == "posted",
+        JournalEntry.reverses_journal_entry_id.is_(None),
+    ]
+    if as_of is not None:
+        filters.append(date_column <= as_of)
+    if start is not None:
+        filters.append(date_column >= start)
+    if end is not None:
+        filters.append(date_column <= end)
+    return filters
+
+
+async def _account_balances(
+    session: AsyncSession,
+    *,
+    as_of: datetime.date | None = None,
+    start: datetime.date | None = None,
+    end: datetime.date | None = None,
+) -> list[AccountBalance]:
+    """Per-account debit/credit totals over active postings, optionally date-windowed.
+
+    `as_of` bounds the window to entries dated on or before `as_of` (a
+    point-in-time snapshot, cumulative from inception). `start`/`end` bound
+    it to entries dated within `[start, end]` (a period summary). Only
+    accounts with a non-zero resulting balance are returned.
+    """
+    filters = _active_posting_filters(JournalEntry.date, as_of, start, end)
+
+    debit_stmt = (
+        select(JournalEntry.debit_account_id, func.sum(JournalEntry.amount))
+        .where(*filters)
+        .group_by(JournalEntry.debit_account_id)
+    )
+    credit_stmt = (
+        select(JournalEntry.credit_account_id, func.sum(JournalEntry.amount))
+        .where(*filters)
+        .group_by(JournalEntry.credit_account_id)
+    )
+
+    debit_totals = dict((await session.execute(debit_stmt)).all())
+    credit_totals = dict((await session.execute(credit_stmt)).all())
+
+    account_ids = set(debit_totals) | set(credit_totals)
+    if not account_ids:
+        return []
+
+    accounts = (
+        (await session.execute(select(Account).where(Account.id.in_(account_ids))))
+        .scalars()
+        .all()
+    )
+
+    balances = []
+    for account in accounts:
+        debit_total = debit_totals.get(account.id, Decimal("0.00"))
+        credit_total = credit_totals.get(account.id, Decimal("0.00"))
+        balance = (
+            debit_total - credit_total
+            if account.type in DEBIT_NORMAL_TYPES
+            else credit_total - debit_total
+        )
+        if balance == 0:
+            continue
+        balances.append(
+            AccountBalance(
+                account_id=account.id,
+                account_code=account.code,
+                account_name=account.name,
+                account_type=account.type,
+                debit_total=debit_total,
+                credit_total=credit_total,
+                balance=balance,
+            )
+        )
+    return balances
