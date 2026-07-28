@@ -19,8 +19,8 @@ description: "Task list for audit and anomaly detection feature implementation"
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 [P] Add `scikit-learn` as a dependency in `backend/pyproject.toml`, per `research.md`'s hybrid-detector decision
-- [ ] T002 Create this feature's new file skeleton: `backend/src/models/{audit_run,anomaly_flag}.py`, `backend/src/schemas/audit.py`, `backend/src/services/audit_service.py`, `backend/src/agent/audit_tools.py`, `backend/src/api/audit.py`; `frontend/src/app/audit/`, `frontend/src/components/{AuditRunner.tsx,AuditHistory.tsx}`, `frontend/src/services/auditApi.ts` — per `plan.md`'s Project Structure
+- [X] T001 [P] Add `scikit-learn` as a dependency in `backend/pyproject.toml`, per `research.md`'s hybrid-detector decision
+- [X] T002 Create this feature's new file skeleton: `backend/src/models/{audit_run,anomaly_flag}.py`, `backend/src/schemas/audit.py`, `backend/src/services/audit_service.py`, `backend/src/agent/audit_tools.py`, `backend/src/api/audit.py`; `frontend/src/app/audit/`, `frontend/src/components/{AuditRunner.tsx,AuditHistory.tsx}`, `frontend/src/services/auditApi.ts` — per `plan.md`'s Project Structure
 
 ---
 
