@@ -77,10 +77,10 @@ description: "Task list for audit and anomaly detection feature implementation"
 
 **Independent Test**: Run two or more audits over different periods and confirm both appear in a history view with their date range and flag counts, and each can be reopened to see its original results.
 
-- [ ] T019 [US3] Implement `AuditService.list_audit_runs(session)` and `AuditService.get_audit_run(session, run_id)` in `backend/src/services/audit_service.py`, per FR-007 (depends on T010)
-- [ ] T020 [US3] Implement `GET /api/audit/runs` and `GET /api/audit/runs/{id}` in `backend/src/api/audit.py`, per `contracts/audit-api.md` (depends on T019)
-- [ ] T021 [US3] Build the `AuditHistory` component (past runs list with date range and flag count; reopens a run to show its full flagged-entry results, reusing `AuditRunner`'s rendering) in `frontend/src/components/AuditHistory.tsx`
-- [ ] T022 [US3] Add `listAuditRuns()` and `getAuditRun(id)` to `frontend/src/services/auditApi.ts`, and wire `AuditHistory` into `frontend/src/app/audit/page.tsx` alongside `AuditRunner`
+- [X] T019 [US3] Implement `AuditService.list_audit_runs(session)` and `AuditService.get_audit_run(session, run_id)` in `backend/src/services/audit_service.py`, per FR-007 (depends on T010)
+- [X] T020 [US3] Implement `GET /api/audit/runs` and `GET /api/audit/runs/{id}` in `backend/src/api/audit.py`, per `contracts/audit-api.md` (depends on T019)
+- [X] T021 [US3] Build the `AuditHistory` component (past runs list with date range and flag count; reopens a run to show its full flagged-entry results, reusing `AuditRunner`'s rendering) in `frontend/src/components/AuditHistory.tsx`
+- [X] T022 [US3] Add `listAuditRuns()` and `getAuditRun(id)` to `frontend/src/services/auditApi.ts`, and wire `AuditHistory` into `frontend/src/app/audit/page.tsx` alongside `AuditRunner`
 
 **Checkpoint**: User Stories 1, 2, AND 3 all work independently.
 

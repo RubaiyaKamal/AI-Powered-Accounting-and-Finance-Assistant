@@ -57,6 +57,11 @@ export interface AuditRunSummary {
   created_at: string;
 }
 
+export interface AuditRunListResponse {
+  items: AuditRunSummary[];
+  total: number;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -93,4 +98,12 @@ export function resolveFlag(
     method: "PATCH",
     body: JSON.stringify({ resolution }),
   });
+}
+
+export function listAuditRuns(): Promise<AuditRunListResponse> {
+  return request("/api/audit/runs");
+}
+
+export function getAuditRun(id: string): Promise<AuditRun> {
+  return request(`/api/audit/runs/${id}`);
 }

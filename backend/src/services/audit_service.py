@@ -248,6 +248,15 @@ async def run_audit(
     return await _get_run(session, run.id)
 
 
+async def list_audit_runs(session: AsyncSession) -> list[AuditRun]:
+    stmt = select(AuditRun).order_by(AuditRun.created_at.desc())
+    return list((await session.execute(stmt)).scalars().all())
+
+
+async def get_audit_run(session: AsyncSession, run_id: uuid.UUID) -> AuditRun:
+    return await _get_run(session, run_id)
+
+
 async def resolve_flag(session: AsyncSession, flag_id: uuid.UUID, resolution: str) -> AnomalyFlag:
     stmt = (
         select(AnomalyFlag)
