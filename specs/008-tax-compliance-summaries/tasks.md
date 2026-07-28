@@ -19,7 +19,7 @@ description: "Task list for tax and compliance summaries feature implementation"
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Create this feature's new file skeleton: `backend/src/models/{tax_rules_document,tax_rules_document_chunk,tax_summary}.py`, `backend/src/schemas/tax.py`, `backend/src/services/{tax_document_service,tax_summary_service}.py`, `backend/src/agent/tax_tools.py`, `backend/src/api/tax.py`; `frontend/src/app/tax/`, `frontend/src/components/{TaxDocumentLibrary.tsx,TaxSummaryGenerator.tsx,TaxSummaryHistory.tsx}`, `frontend/src/services/taxApi.ts` — per `plan.md`'s Project Structure (no new dependency to add — `research.md`'s retrieval decision reuses `openai` and `numpy`, both already present)
+- [X] T001 Create this feature's new file skeleton: `backend/src/models/{tax_rules_document,tax_rules_document_chunk,tax_summary}.py`, `backend/src/schemas/tax.py`, `backend/src/services/{tax_document_service,tax_summary_service}.py`, `backend/src/agent/tax_tools.py`, `backend/src/api/tax.py`; `frontend/src/app/tax/`, `frontend/src/components/{TaxDocumentLibrary.tsx,TaxSummaryGenerator.tsx,TaxSummaryHistory.tsx}`, `frontend/src/services/taxApi.ts` — per `plan.md`'s Project Structure (no new dependency to add — `research.md`'s retrieval decision reuses `openai` and `numpy`, both already present)
 
 ---
 
