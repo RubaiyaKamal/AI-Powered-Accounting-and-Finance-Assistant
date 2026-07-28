@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   ApiError,
   deleteExpense,
@@ -124,7 +124,7 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
         </thead>
         <tbody>
           {entries.map((entry) => (
-            <>
+            <Fragment key={entry.id}>
               {editingId === entry.id ? (
                 <tr key={entry.id}>
                   <td>
@@ -167,7 +167,10 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
                   <td>
                     {entry.category.name}
                     {entry.category_source === "ai_suggested" && (
-                      <span className="badge-ai">AI</span>
+                      <>
+                        {" "}
+                        <span className="badge-ai">AI</span>
+                      </>
                     )}
                   </td>
                   <td>{entry.description ?? "—"}</td>
@@ -191,7 +194,7 @@ export default function ExpenseList({ refreshKey }: { refreshKey: number }) {
                   </td>
                 </tr>
               )}
-            </>
+            </Fragment>
           ))}
           {entries.length === 0 && (
             <tr>
