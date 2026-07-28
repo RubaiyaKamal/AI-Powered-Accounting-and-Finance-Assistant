@@ -120,7 +120,7 @@ description: "Task list for expense-entry feature implementation"
 - [x] T040 [P] Create the Lucidchart or draw.io workflow diagram (UI → API → agent → tools → database flow) and record its shareable URL in `.specify/memory/constitution.md` (Principle V) and `README.md` — required before this feature's PR merges, per the Constitution Check in `plan.md`
 - [x] T041 [P] Write `README.md` with setup and run instructions (clone, install, environment variables, `docker-compose up`)
 - [x] T042 [P] Add Docker setup: `backend/Dockerfile`, `frontend/Dockerfile`, and a root `docker-compose.yml` wiring both plus PostgreSQL
-- [ ] T043 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
+- [x] T043 Run the `quickstart.md` validation flow end-to-end and fix any gaps found
 - [x] T044 [P] Code cleanup pass across `backend/` and `frontend/` for this feature
 
 ---
@@ -191,4 +191,7 @@ Task: "Create ExpenseEntryEditHistory SQLAlchemy model in backend/src/models/exp
 - No test tasks were generated (not explicitly requested); add them ahead of their corresponding implementation task if the team decides to adopt TDD for this feature.
 - T040 (workflow diagram) is not optional polish — it's a constitution-mandated deliverable (Principle V) flagged in `plan.md`'s Constitution Check as pending before this feature's PR can merge.
 - Commit after each task or logical group, on the `001-expense-entry` branch, per the `github-commit-workflow` skill and the constitution's Principle IV.
-- T043 remains open: Docker Desktop's daemon would not come up in the dev environment during implementation (API returned 500 for several minutes after launch), so the full stack (`docker-compose up`) could not be started to run `quickstart.md` end-to-end. Backend was instead verified via `uv run python -c "import src.main"` (clean) and `ruff check` (clean); frontend via `npx tsc --noEmit` (clean). Run `docker-compose up` and walk through `quickstart.md` once Docker is healthy.
+- T043 completed: `docker-compose up` was run end-to-end and all six `quickstart.md` steps were validated (via direct API calls exercising the same endpoints the UI calls). Two real gaps were found and fixed:
+  - The backend image never ran Alembic migrations on startup, so a fresh `docker-compose up` left the DB schemaless (`GET /api/categories` → 500). Fixed by changing `backend/Dockerfile`'s `CMD` to `uv run alembic upgrade head && uv run uvicorn ...`.
+  - `PATCH /api/expenses/{id}` returned 500 (`MissingGreenlet`) even though the underlying update succeeded: `ExpenseEntryEditHistory`'s `session.refresh(entry, attribute_names=["category", "edit_history"])` didn't include `updated_at` (a server-side `onupdate=func.now()` column), leaving it expired; accessing it during Pydantic's synchronous `model_validate` triggered an async lazy-load in a sync context. Fixed in `backend/src/services/expense_entry_service.py`'s `update_entry` by adding a full `await session.refresh(entry)` before the relationship-scoped refresh.
+  - Note: the first natural-language parse call after a fresh backend start took ~3 minutes (agent/model cold start); subsequent calls completed in ~3 seconds. Not treated as a bug, but worth knowing if a demo does a cold first NL call.
