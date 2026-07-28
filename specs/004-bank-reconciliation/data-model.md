@@ -14,12 +14,18 @@ that's the correct choice here.
 | `date` | date | not null | from the imported CSV row |
 | `amount` | numeric(12,2) | not null | from the imported CSV row |
 | `description` | text | not null | from the imported CSV row |
+| `suggested_expense_entry_id` | FK → ExpenseEntry.id, `ON DELETE SET NULL` | nullable | set only when matching classified this transaction as *ambiguous* (research.md) and `adjudicate_match` returned a non-null choice; cleared automatically if that expense entry is later deleted — the transaction simply reverts to no-suggestion, not a dangling reference |
+| `ai_reasoning` | text | nullable | the AI's explanation, set alongside `suggested_expense_entry_id` |
 | `created_at` | timestamptz | not null, default now() | import time |
 
-**Immutability**: no `updated_at` — per FR-012, a `BankTransaction` is
-never edited after import. There is also no delete endpoint for it (only
-`Match` rows can be removed, via undo) — a bank transaction, once
-imported, is permanent source data.
+**Immutability**: FR-012 scopes immutability to the three CSV-sourced
+fields (`date`, `amount`, `description`) — those are never edited after
+import, and there is no delete endpoint for a `BankTransaction` (only
+`Match` rows can be removed, via undo). `suggested_expense_entry_id` and
+`ai_reasoning` are system-computed matching metadata, not source data —
+they're written once by the matching pass and may be cleared later (see
+above); this doesn't violate FR-012's guarantee about the imported data
+itself.
 
 **Validation rules**:
 - `(date, amount, description)` together MUST be unique — enforced by a DB
@@ -60,10 +66,14 @@ most one `ExpenseEntry` (null when dismissed).
 2. Matching produces one of:
    - A `Match` row with `source=auto`, `status=confirmed`,
      `ai_reasoning=null` (the auto-match path, FR-005).
-   - No `Match` row yet, but the transaction is flagged ambiguous with a
-     recorded AI suggestion + reasoning for the review queue to display
-     (FR-006) — this suggestion is *not* a `Match` row until the admin
-     confirms it.
+   - No `Match` row yet, but `suggested_expense_entry_id`/`ai_reasoning`
+     are set on the `BankTransaction` itself, for the review queue to
+     display (FR-006) — this suggestion is *not* a `Match` row until the
+     admin confirms it. The list of other candidates considered
+     (`candidates_considered` in the API contract) is recomputed live from
+     the same deterministic amount/date-eligibility query at read time,
+     not persisted — it's cheap, always consistent, and never itself an AI
+     call.
    - No `Match` row and no suggestion (no plausible candidates at all,
      FR-007).
 3. From the review queue (US3), an admin resolves an unmatched transaction
