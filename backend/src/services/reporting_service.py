@@ -7,7 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.account import Account
 from src.models.journal_entry import JournalEntry
-from src.schemas.reports import AccountBalance, ProfitAndLossResponse, TrialBalanceResponse
+from src.schemas.reports import (
+    AccountBalance,
+    BalanceSheetResponse,
+    ProfitAndLossResponse,
+    TrialBalanceResponse,
+)
 
 DEBIT_NORMAL_TYPES = {"asset", "expense"}
 
@@ -147,4 +152,27 @@ async def profit_and_loss(
         expense_lines=expense_lines,
         total_expenses=total_expenses,
         net_profit=total_revenue - total_expenses,
+    )
+
+
+async def balance_sheet(
+    session: AsyncSession, as_of: datetime.date | None = None
+) -> BalanceSheetResponse:
+    as_of = as_of or datetime.date.today()
+    lines = await _account_balances(session, as_of=as_of)
+    asset_lines = [line for line in lines if line.account_type == "asset"]
+    liability_lines = [line for line in lines if line.account_type == "liability"]
+    equity_lines = [line for line in lines if line.account_type == "equity"]
+    total_assets = sum((line.balance for line in asset_lines), Decimal("0.00"))
+    total_liabilities = sum((line.balance for line in liability_lines), Decimal("0.00"))
+    total_equity = sum((line.balance for line in equity_lines), Decimal("0.00"))
+    return BalanceSheetResponse(
+        as_of=as_of,
+        asset_lines=asset_lines,
+        total_assets=total_assets,
+        liability_lines=liability_lines,
+        total_liabilities=total_liabilities,
+        equity_lines=equity_lines,
+        total_equity=total_equity,
+        is_balanced=total_assets == total_liabilities + total_equity,
     )

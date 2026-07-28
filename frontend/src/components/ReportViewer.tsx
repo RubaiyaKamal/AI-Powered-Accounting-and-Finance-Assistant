@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import {
   ApiError,
+  BalanceSheetResponse,
   ProfitAndLossResponse,
   TrialBalanceResponse,
+  getBalanceSheet,
   getProfitAndLoss,
   getTrialBalance,
 } from "@/services/reportsApi";
 
-type ReportType = "trial_balance" | "profit_and_loss";
+type ReportType = "trial_balance" | "profit_and_loss" | "balance_sheet";
 
 export default function ReportViewer() {
   const [reportType, setReportType] = useState<ReportType>("trial_balance");
@@ -18,6 +20,7 @@ export default function ReportViewer() {
   const [end, setEnd] = useState("");
   const [trialBalance, setTrialBalance] = useState<TrialBalanceResponse | null>(null);
   const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossResponse | null>(null);
+  const [balanceSheet, setBalanceSheet] = useState<BalanceSheetResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function load() {
@@ -31,6 +34,12 @@ export default function ReportViewer() {
     } else if (reportType === "profit_and_loss") {
       getProfitAndLoss(start || undefined, end || undefined)
         .then(setProfitAndLoss)
+        .catch((err) =>
+          setError(err instanceof ApiError ? err.message : "Failed to load report.")
+        );
+    } else if (reportType === "balance_sheet") {
+      getBalanceSheet(asOf || undefined)
+        .then(setBalanceSheet)
         .catch((err) =>
           setError(err instanceof ApiError ? err.message : "Failed to load report.")
         );
@@ -53,9 +62,10 @@ export default function ReportViewer() {
           >
             <option value="trial_balance">Trial Balance</option>
             <option value="profit_and_loss">Profit &amp; Loss</option>
+            <option value="balance_sheet">Balance Sheet</option>
           </select>
         </div>
-        {reportType === "trial_balance" && (
+        {(reportType === "trial_balance" || reportType === "balance_sheet") && (
           <div className="field">
             <label htmlFor="tb-as-of">As of</label>
             <input
@@ -218,6 +228,86 @@ export default function ReportViewer() {
                 </td>
               </tr>
             </tfoot>
+          </table>
+        </>
+      )}
+
+      {reportType === "balance_sheet" && balanceSheet && (
+        <>
+          <p>
+            As of {balanceSheet.as_of} —{" "}
+            <strong className={balanceSheet.is_balanced ? "success-text" : "error"}>
+              {balanceSheet.is_balanced
+                ? "Balanced"
+                : "Not balanced (Assets ≠ Liabilities + Equity)"}
+            </strong>
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan={2}>
+                  <strong>Assets</strong>
+                </td>
+              </tr>
+              {balanceSheet.asset_lines.map((line) => (
+                <tr key={line.account_id}>
+                  <td>{line.account_name}</td>
+                  <td>{line.balance}</td>
+                </tr>
+              ))}
+              <tr>
+                <td>
+                  <strong>Total Assets</strong>
+                </td>
+                <td>
+                  <strong>{balanceSheet.total_assets}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2}>
+                  <strong>Liabilities</strong>
+                </td>
+              </tr>
+              {balanceSheet.liability_lines.map((line) => (
+                <tr key={line.account_id}>
+                  <td>{line.account_name}</td>
+                  <td>{line.balance}</td>
+                </tr>
+              ))}
+              <tr>
+                <td>
+                  <strong>Total Liabilities</strong>
+                </td>
+                <td>
+                  <strong>{balanceSheet.total_liabilities}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2}>
+                  <strong>Equity</strong>
+                </td>
+              </tr>
+              {balanceSheet.equity_lines.map((line) => (
+                <tr key={line.account_id}>
+                  <td>{line.account_name}</td>
+                  <td>{line.balance}</td>
+                </tr>
+              ))}
+              <tr>
+                <td>
+                  <strong>Total Equity</strong>
+                </td>
+                <td>
+                  <strong>{balanceSheet.total_equity}</strong>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </>
       )}

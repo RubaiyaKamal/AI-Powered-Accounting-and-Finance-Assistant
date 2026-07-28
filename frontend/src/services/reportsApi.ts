@@ -29,6 +29,17 @@ export interface ProfitAndLossResponse {
   net_profit: string;
 }
 
+export interface BalanceSheetResponse {
+  as_of: string;
+  asset_lines: AccountBalance[];
+  total_assets: string;
+  liability_lines: AccountBalance[];
+  total_liabilities: string;
+  equity_lines: AccountBalance[];
+  total_equity: string;
+  is_balanced: boolean;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -63,4 +74,9 @@ export function getProfitAndLoss(
     Object.entries({ start, end }).filter(([, v]) => v) as [string, string][]
   ).toString();
   return request(`/api/reports/profit-and-loss${qs ? `?${qs}` : ""}`);
+}
+
+export function getBalanceSheet(asOf?: string): Promise<BalanceSheetResponse> {
+  const qs = asOf ? `?as_of=${asOf}` : "";
+  return request(`/api/reports/balance-sheet${qs}`);
 }

@@ -71,10 +71,10 @@ description: "Task list for financial reporting feature implementation"
 
 **Independent Test**: Post journal entries across asset, liability, and equity accounts, request a balance sheet as of a chosen date, and confirm total assets equal total liabilities plus total equity.
 
-- [ ] T013 [US3] Implement `ReportingService.balance_sheet(session, as_of)` (defaults `as_of` to today; builds `asset_lines`/`total_assets`, `liability_lines`/`total_liabilities`, `equity_lines`/`total_equity`, `is_balanced` from `_account_balances`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-004, FR-009 (depends on T003)
-- [ ] T014 [US3] Implement `GET /api/reports/balance-sheet` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T013)
-- [ ] T015 [US3] Extend `ReportViewer` with the Balance Sheet report type (asset/liability/equity sections, `is_balanced` flag surfaced visibly) in `frontend/src/components/ReportViewer.tsx` (depends on T007)
-- [ ] T016 [US3] Add `getBalanceSheet(asOf?)` to `frontend/src/services/reportsApi.ts`
+- [X] T013 [US3] Implement `ReportingService.balance_sheet(session, as_of)` (defaults `as_of` to today; builds `asset_lines`/`total_assets`, `liability_lines`/`total_liabilities`, `equity_lines`/`total_equity`, `is_balanced` from `_account_balances`) in `backend/src/services/reporting_service.py`, per `data-model.md`, FR-004, FR-009 (depends on T003)
+- [X] T014 [US3] Implement `GET /api/reports/balance-sheet` in `backend/src/api/reports.py`, per `contracts/reports-api.md` (depends on T013)
+- [X] T015 [US3] Extend `ReportViewer` with the Balance Sheet report type (asset/liability/equity sections, `is_balanced` flag surfaced visibly) in `frontend/src/components/ReportViewer.tsx` (depends on T007)
+- [X] T016 [US3] Add `getBalanceSheet(asOf?)` to `frontend/src/services/reportsApi.ts`
 
 **Checkpoint**: User Stories 1, 2, AND 3 all work independently.
 
