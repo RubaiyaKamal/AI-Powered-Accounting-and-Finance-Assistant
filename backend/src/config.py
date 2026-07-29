@@ -4,9 +4,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+asyncpg://postgres:postgres@localhost:5432/accounting",
+
+def _normalize_database_url(url: str) -> str:
+    """Rewrite postgres://... or postgresql://... to the asyncpg driver scheme
+    SQLAlchemy's async engine requires. Railway's Postgres plugin (and most
+    managed Postgres hosts) exposes DATABASE_URL without a driver suffix.
+    Leaves the URL untouched if a driver is already specified.
+    """
+    if url.startswith("postgres://"):
+        return "postgresql+asyncpg://" + url[len("postgres://"):]
+    if url.startswith("postgresql://"):
+        return "postgresql+asyncpg://" + url[len("postgresql://"):]
+    return url
+
+
+DATABASE_URL = _normalize_database_url(
+    os.environ.get(
+        "DATABASE_URL",
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/accounting",
+    )
 )
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 AGENT_MODEL = os.environ.get("AGENT_MODEL", "gpt-4o-mini")
