@@ -64,6 +64,12 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
+## Deploying to Railway
+
+See [`docs/railway-deployment.md`](docs/railway-deployment.md) for the
+step-by-step backend + Postgres deployment guide, including troubleshooting
+for common failure modes.
+
 ## Tests / linting
 
 ```bash
