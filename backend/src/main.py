@@ -7,6 +7,8 @@ from src.api.analysis import router as analysis_router
 from src.api.audit import router as audit_router
 from src.api.categories import router as categories_router
 from src.api.expenses import router as expenses_router
+from src.api.income import router as income_router
+from src.api.income_sources import router as income_sources_router
 from src.api.ledger import router as ledger_router
 from src.api.reconciliation import router as reconciliation_router
 from src.api.reports import router as reports_router
@@ -23,6 +25,8 @@ app.add_middleware(
 )
 
 app.include_router(expenses_router)
+app.include_router(income_router)
+app.include_router(income_sources_router)
 app.include_router(categories_router)
 app.include_router(agent_router)
 app.include_router(accounts_router)

@@ -12,7 +12,8 @@ class JournalEntryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
-    expense_entry_id: uuid.UUID
+    expense_entry_id: uuid.UUID | None = None
+    income_entry_id: uuid.UUID | None = None
     debit_account: AccountRead
     credit_account: AccountRead
     amount: Decimal

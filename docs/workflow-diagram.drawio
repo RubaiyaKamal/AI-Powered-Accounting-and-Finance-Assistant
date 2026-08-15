@@ -26,7 +26,7 @@
         </mxCell>
 
         <!-- Database -->
-        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history, accounts,&#10;account_codings, journal_entries, bank_transactions, matches,&#10;audit_runs, anomaly_flags, tax_rules_documents,&#10;tax_rules_document_chunks, tax_summaries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+        <mxCell id="db" value="PostgreSQL&#10;expense_entries, categories, edit_history, accounts,&#10;account_codings, journal_entries, income_sources, income_entries,&#10;bank_transactions, matches, audit_runs, anomaly_flags,&#10;tax_rules_documents, tax_rules_document_chunks, tax_summaries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E2E33;strokeColor=#D4AF37;fontColor=#F5F5F5;fontStyle=1;fontSize=13;" vertex="1" parent="1">
           <mxGeometry x="390" y="365" width="320" height="200" as="geometry" />
         </mxCell>
 
