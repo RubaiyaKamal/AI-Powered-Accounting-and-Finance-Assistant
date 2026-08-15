@@ -16,17 +16,24 @@ class JournalEntry(Base):
         CheckConstraint(
             "debit_account_id != credit_account_id", name="ck_journal_entries_distinct_accounts"
         ),
+        CheckConstraint(
+            "(expense_entry_id IS NOT NULL) != (income_entry_id IS NOT NULL)",
+            name="ck_journal_entries_exactly_one_source",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     # Not a DB-enforced FK, same reasoning as AccountCoding.expense_entry_id:
-    # a journal entry must survive its source expense entry's deletion
-    # (FR-012) rather than block it or cascade away.
-    expense_entry_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
-    account_coding_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("account_codings.id"), nullable=False
+    # a journal entry must survive its source entry's deletion (FR-012 /
+    # 010-income-entry FR-006) rather than block it or cascade away. Exactly
+    # one of expense_entry_id / income_entry_id is set (see check constraint
+    # above) — a posting always traces back to exactly one source record.
+    expense_entry_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
+    income_entry_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
+    account_coding_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("account_codings.id"), nullable=True
     )
     debit_account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("accounts.id"), nullable=False
@@ -44,7 +51,7 @@ class JournalEntry(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
-    account_coding: Mapped["AccountCoding"] = relationship(  # noqa: F821
+    account_coding: Mapped["AccountCoding | None"] = relationship(  # noqa: F821
         back_populates="journal_entries"
     )
     debit_account: Mapped["Account"] = relationship(foreign_keys=[debit_account_id])  # noqa: F821

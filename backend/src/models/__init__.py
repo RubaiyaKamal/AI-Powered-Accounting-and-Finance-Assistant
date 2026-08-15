@@ -6,6 +6,8 @@ from src.models.bank_transaction import BankTransaction
 from src.models.category import Category
 from src.models.expense_entry import ExpenseEntry
 from src.models.expense_entry_edit_history import ExpenseEntryEditHistory
+from src.models.income_entry import IncomeEntry
+from src.models.income_source import IncomeSource
 from src.models.journal_entry import JournalEntry
 from src.models.match import Match
 from src.models.tax_rules_document import TaxRulesDocument
@@ -21,6 +23,8 @@ __all__ = [
     "Category",
     "ExpenseEntry",
     "ExpenseEntryEditHistory",
+    "IncomeEntry",
+    "IncomeSource",
     "JournalEntry",
     "Match",
     "TaxRulesDocument",
