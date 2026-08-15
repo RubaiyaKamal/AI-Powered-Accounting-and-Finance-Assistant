@@ -11,6 +11,7 @@ from src.config import ACCOUNT_CODING_CONFIDENCE_THRESHOLD
 from src.models.account import Account
 from src.models.account_coding import AccountCoding
 from src.models.expense_entry import ExpenseEntry
+from src.models.income_entry import IncomeEntry
 from src.models.journal_entry import JournalEntry
 
 OFFSET_ACCOUNT_NAME = "Cash"
@@ -106,6 +107,7 @@ async def post_journal_entry(
 async def reverse_journal_entry(session: AsyncSession, entry: JournalEntry) -> JournalEntry:
     reversal = JournalEntry(
         expense_entry_id=entry.expense_entry_id,
+        income_entry_id=entry.income_entry_id,
         account_coding_id=entry.account_coding_id,
         debit_account_id=entry.credit_account_id,
         credit_account_id=entry.debit_account_id,
@@ -119,6 +121,52 @@ async def reverse_journal_entry(session: AsyncSession, entry: JournalEntry) -> J
     await session.commit()
     await session.refresh(reversal, attribute_names=["debit_account", "credit_account"])
     return reversal
+
+
+async def post_income_journal_entry(
+    session: AsyncSession, income_entry: IncomeEntry
+) -> JournalEntry:
+    offset_account = await _get_offset_account(session)
+    if income_entry.source.account_id == offset_account.id:
+        raise ValidationError(
+            "Cannot post a journal entry where the debit and credit accounts are the same"
+        )
+
+    entry = JournalEntry(
+        income_entry_id=income_entry.id,
+        debit_account_id=offset_account.id,
+        credit_account_id=income_entry.source.account_id,
+        amount=income_entry.amount,
+        date=income_entry.date,
+        status="posted",
+    )
+    session.add(entry)
+    await session.commit()
+    await session.refresh(entry, attribute_names=["debit_account", "credit_account"])
+    return entry
+
+
+async def _active_income_journal_entry(
+    session: AsyncSession, income_entry_id: uuid.UUID
+) -> JournalEntry | None:
+    stmt = select(JournalEntry).where(
+        JournalEntry.income_entry_id == income_entry_id,
+        JournalEntry.status == "posted",
+        JournalEntry.reverses_journal_entry_id.is_(None),
+    )
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
+
+
+async def reverse_journal_entry_for_income(
+    session: AsyncSession, income_entry_id: uuid.UUID
+) -> None:
+    """Reverse the posted journal entry (if any) for an income entry about to be
+    deleted or corrected. See 010-income-entry FR-005/FR-006.
+    """
+    active_entry = await _active_income_journal_entry(session, income_entry_id)
+    if active_entry is not None:
+        await reverse_journal_entry(session, active_entry)
 
 
 async def suggest_coding(session: AsyncSession, expense_entry_id: uuid.UUID) -> AccountCoding:
