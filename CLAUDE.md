@@ -215,4 +215,5 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 - Database: PostgreSQL — `expense_entries`, `categories`, `expense_entry_edit_history` tables (001-expense-entry)
 
 ## Recent Changes
+- 010-income-entry: Added income_sources/income_entries tables, generalized journal_entries to post from either an expense or income entry, and income CRUD (backend + frontend) — unblocks the existing income-statement/balance-sheet reports, which previously always showed $0 revenue
 - 001-expense-entry: Added FastAPI/Pydantic/SQLAlchemy backend, Next.js frontend, and PostgreSQL schema for expense entries, categories, and edit history
